@@ -11,19 +11,31 @@ public class Locations implements Map<Integer, Location> {
     private static Map<Integer, Location> locations = new HashMap<>();
 
     public static void main(String[] args) throws IOException {
-        FileWriter locFile = null;
-        try {
-            locFile = new FileWriter("locations.txt");
+        // try with resources ensures that FileWriter stream is closed whether the code executes normally or an Exception occurs
+        try (FileWriter locFile = new FileWriter("locations.txt")) {
             for (Location location : locations.values()) {
                 locFile.write(location.getLocationID() + ", " + location.getDescription() + "\n");
             }
-        } finally {
-            System.out.println("in finally block");
-            if (locFile != null) { // important check to only close a file if it's been created otherwise, would throw NullPointerException
-                System.out.println("attempt to close locFile");
-                locFile.close(); // very important to clean up resources
-            }
         }
+        // try-finally does behave differently than try-with-resources
+        // the try-finally can throw at the .close() back up the call stack
+        // but the above version causes the exception to be suppressed and the exception from the try block is the one thrown up the call stack
+        // possible in the try-finally first error could be hidden by the exception when closing the stream, close() probably not the root cause of error
+        // try-with-resources ensures that the first error is the one being thrown back
+
+//        FileWriter locFile = null;
+//        try {
+//            locFile = new FileWriter("locations.txt");
+//            for (Location location : locations.values()) {
+//                locFile.write(location.getLocationID() + ", " + location.getDescription() + "\n");
+//            }
+//        } finally {
+//            System.out.println("in finally block");
+//            if (locFile != null) { // important check to only close a file if it's been created otherwise, would throw NullPointerException
+//                System.out.println("attempt to close locFile");
+//                locFile.close(); // very important to clean up resources
+//            }
+//        }
     }
 
     static { // static block ensures data is initialized only once, can be used throughout the class
