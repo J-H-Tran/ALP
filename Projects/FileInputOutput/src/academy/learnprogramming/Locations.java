@@ -16,6 +16,7 @@ public class Locations implements Map<Integer, Location> {
             locFile = new FileWriter("locations.txt");
             for (Location location : locations.values()) {
                 locFile.write(location.getLocationID() + ", " + location.getDescription() + "\n");
+                throw new IOException("test exception thrown while writing"); //throwing your own exception can be a useful technique when testing your code
             }
         } finally {
             System.out.println("in finally block");
