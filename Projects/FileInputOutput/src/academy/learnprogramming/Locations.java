@@ -12,9 +12,14 @@ public class Locations implements Map<Integer, Location> {
 
     public static void main(String[] args) throws IOException {
         // try with resources ensures that FileWriter stream is closed whether the code executes normally or an Exception occurs
-        try (FileWriter locFile = new FileWriter("locations.txt")) {
+        try (FileWriter locFile = new FileWriter("locations.txt");
+                FileWriter dirFile = new FileWriter("directions.txt")) {
             for (Location location : locations.values()) {
                 locFile.write(location.getLocationID() + ", " + location.getDescription() + "\n");
+
+                for (String direction : location.getExits().keySet()) {
+                    dirFile.write(location.getLocationID() + ", " + direction + ", " + location.getExits().get(direction) + "\n");
+                }
             }
         }
         // try-finally does behave differently than try-with-resources
