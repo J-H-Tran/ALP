@@ -11,9 +11,9 @@ public class Locations implements Map<Integer, Location> {
     private static Map<Integer, Location> locations = new HashMap<>();
 
     public static void main(String[] args) {
-//        FileWriter locFile = null;  // this is declared outside the try-catch because it would have a different scope therefore, would not be useable outside the try-catch blocks
+        FileWriter locFile = null;
         try {
-            FileWriter locFile = new FileWriter("locations.txt");
+            locFile = new FileWriter("locations.txt");
             for (Location location : locations.values()) {
                 locFile.write(location.getLocationID() + ", " + location.getDescription() + "\n");
             }
