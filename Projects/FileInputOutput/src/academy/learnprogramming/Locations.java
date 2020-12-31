@@ -50,7 +50,6 @@ public class Locations implements Map<Integer, Location> {
             * scanner must be an object that implements the readable interface.
             * */
         try (Scanner scanner = new Scanner(new BufferedReader(new FileReader("locations_big.txt")))) {
-            String input;
             while (scanner.hasNextLine()) {
                 int loc = scanner.nextInt();
 
