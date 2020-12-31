@@ -1,2 +1,5 @@
-# Ignore 
+# Ignore text files 
 *.txt
+
+# Ignore java class files
+*.class
