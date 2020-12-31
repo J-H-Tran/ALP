@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 
 public class Locations implements Map<Integer, Location> {
@@ -48,13 +49,13 @@ public class Locations implements Map<Integer, Location> {
             * It's probably more accurate to refer to it as readbale instead of a stream because, the source for a
             * scanner must be an object that implements the readable interface.
             * */
-        try (BufferedReader locFile = new BufferedReader(new FileReader("locations_big.txt"))) {
+        try (Scanner scanner = new Scanner(new BufferedReader(new FileReader("locations_big.txt")))) {
             String input;
-            while ((input = locFile.readLine()) != null) {
-                String[] data = input.split(",");
+            while (scanner.hasNextLine()) {
+                int loc = scanner.nextInt();
 
-                int loc = Integer.parseInt(data[0]);
-                String description = data[1];
+                scanner.skip(scanner.delimiter());  // skip over a delimiter when parsing data from file
+                String description = scanner.nextLine();
 
                 System.out.println("Imported loc: " + loc + ": " + description);
 
