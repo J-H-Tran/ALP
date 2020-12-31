@@ -11,8 +11,8 @@ public class Locations implements Map<Integer, Location> {
 
     public static void main(String[] args) throws IOException {
         // try with resources ensures that FileWriter stream is closed whether the code executes normally or an Exception occurs
-        try (FileWriter locFile = new FileWriter("locations.txt");
-             FileWriter dirFile = new FileWriter("directions.txt")) {
+        try (FileWriter locFile = new FileWriter("locations2.txt");
+             FileWriter dirFile = new FileWriter("directions2.txt")) {
             for (Location location : locations.values()) {
                 locFile.write(location.getLocationID() + "," + location.getDescription() + "\n");
 
@@ -42,8 +42,14 @@ public class Locations implements Map<Integer, Location> {
 //        }
     }
 
+    /*
+    * Static initialization block is initialized when the class is loaded so there isn't a way for code to catch
+    * an exception anywhere if it occurs in this block.
+    *
+    * You can throw unchecked exceptions in an initialization block but not checked ones
+    * */
     static { // static block ensures data is initialized only once, can be used throughout the class
-        Scanner scanner = null;
+//        Scanner scanner = null;
             /*
             * Why don't we need to worry about closing FileReader stream?
             *
@@ -52,8 +58,7 @@ public class Locations implements Map<Integer, Location> {
             * It's probably more accurate to refer to it as readbale instead of a stream because, the source for a
             * scanner must be an object that implements the readable interface.
             * */
-        try {
-            scanner = new Scanner(new FileReader("locations.txt"));
+        try (Scanner scanner = new Scanner(new FileReader("locations_big.txt"))) {
             scanner.useDelimiter(",");
 
             while (scanner.hasNextLine()) {
@@ -69,15 +74,10 @@ public class Locations implements Map<Integer, Location> {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (scanner != null) {
-                scanner.close();
-            }
         }
 
         // Reading exits
-        try {
-            scanner = new Scanner(new BufferedReader(new FileReader("directions.txt")));
+        try (Scanner scanner = new Scanner(new BufferedReader(new FileReader("directions_big.txt")))) {
             scanner.useDelimiter(",");
 
             while (scanner.hasNextLine()) {
@@ -104,10 +104,6 @@ public class Locations implements Map<Integer, Location> {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (scanner != null) {
-                scanner.close();
-            }
         }
 //        Map<String, Integer> tempExit = new HashMap<>();
 //        locations.put(0, new Location(0, "You are sitting in front of a computer learning Java",null));
