@@ -1,11 +1,9 @@
 package academy.learnprogramming;
 
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Locations implements Map<Integer, Location> {
     private static Map<Integer, Location> locations = new HashMap<>();
@@ -44,6 +42,36 @@ public class Locations implements Map<Integer, Location> {
     }
 
     static { // static block ensures data is initialized only once, can be used throughout the class
+        Scanner scanner = null;
+        try {
+            /*
+            * Why don't we need to worry about closing FileReader stream?
+            *
+            * When the scanner is lcosed its close() method also takes care of closing any stream that it was using
+            * provided that the stream object implements the closable interface and the FileReader does.
+            * It's probably more accurate to refer to it as readbale instead of a stream because, the source for a
+            * scanner must be an object that implements the readable interface.
+            * */
+
+            scanner = new Scanner(new FileReader("locations.txt"));
+            scanner.useDelimiter(",");
+
+            while (scanner.hasNextLine()) {
+                int loc = scanner.nextInt();
+                scanner.skip(scanner.delimiter());  // skip over a delimiter when parsing data from file
+                String description = scanner.nextLine();
+                System.out.println("Imported loc: " + loc + ": " + description);
+
+                Map<String, Integer> tempExit = new HashMap<>();
+                locations.put(loc, new Location(loc, description, tempExit));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (scanner != null) {
+                scanner.close();
+            }
+        }
 //        Map<String, Integer> tempExit = new HashMap<>();
 //        locations.put(0, new Location(0, "You are sitting in front of a computer learning Java",null));
 //
