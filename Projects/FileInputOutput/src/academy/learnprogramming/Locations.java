@@ -1,5 +1,6 @@
 package academy.learnprogramming;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,12 +12,12 @@ public class Locations implements Map<Integer, Location> {
     public static void main(String[] args) throws IOException {
         // try with resources ensures that FileWriter stream is closed whether the code executes normally or an Exception occurs
         try (FileWriter locFile = new FileWriter("locations.txt");
-                FileWriter dirFile = new FileWriter("directions.txt")) {
+             FileWriter dirFile = new FileWriter("directions.txt")) {
             for (Location location : locations.values()) {
-                locFile.write(location.getLocationID() + ", " + location.getDescription() + "\n");
+                locFile.write(location.getLocationID() + "," + location.getDescription() + "\n");
 
                 for (String direction : location.getExits().keySet()) {
-                    dirFile.write(location.getLocationID() + ", " + direction + ", " + location.getExits().get(direction) + "\n");
+                    dirFile.write(location.getLocationID() + "," + direction + "," + location.getExits().get(direction) + "\n");
                 }
             }
         }
@@ -43,7 +44,6 @@ public class Locations implements Map<Integer, Location> {
 
     static { // static block ensures data is initialized only once, can be used throughout the class
         Scanner scanner = null;
-        try {
             /*
             * Why don't we need to worry about closing FileReader stream?
             *
@@ -52,18 +52,55 @@ public class Locations implements Map<Integer, Location> {
             * It's probably more accurate to refer to it as readbale instead of a stream because, the source for a
             * scanner must be an object that implements the readable interface.
             * */
-
+        try {
             scanner = new Scanner(new FileReader("locations.txt"));
             scanner.useDelimiter(",");
 
             while (scanner.hasNextLine()) {
                 int loc = scanner.nextInt();
+
                 scanner.skip(scanner.delimiter());  // skip over a delimiter when parsing data from file
                 String description = scanner.nextLine();
+
                 System.out.println("Imported loc: " + loc + ": " + description);
 
                 Map<String, Integer> tempExit = new HashMap<>();
                 locations.put(loc, new Location(loc, description, tempExit));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (scanner != null) {
+                scanner.close();
+            }
+        }
+
+        // Reading exits
+        try {
+            scanner = new Scanner(new BufferedReader(new FileReader("directions.txt")));
+            scanner.useDelimiter(",");
+
+            while (scanner.hasNextLine()) {
+//                int loc = scanner.nextInt();
+//
+//                scanner.skip(scanner.delimiter());
+//                String direction = scanner.next();
+//
+//                scanner.skip(scanner.delimiter());
+//                String dest = scanner.nextLine();
+//
+//                int destination = Integer.parseInt(dest);
+
+                String input = scanner.nextLine();
+                String[] data = input.split(",");
+
+                int loc = Integer.parseInt(data[0]);
+                String direction = data[1];
+                int destination = Integer.parseInt(data[2]);
+
+                System.out.println(loc + ": " + direction + ": " + destination);
+                Location location = locations.get(loc);
+                location.addExit(direction, destination);
             }
         } catch (IOException e) {
             e.printStackTrace();
