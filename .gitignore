@@ -6,3 +6,6 @@
 
 # Ignore data files (binary data)
 *.dat
+
+# Ignore compiled code
+out/
