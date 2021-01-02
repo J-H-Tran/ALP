@@ -1,9 +1,10 @@
 package academy.learnprogramming;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -16,18 +17,18 @@ public class Locations implements Map<Integer, Location> {
 
     public static void main(String[] args) throws IOException {
         // try with resources ensures that FileWriter stream is closed whether the code executes normally or an Exception occurs
-        try (BufferedWriter locFile = new BufferedWriter(new FileWriter("locations.txt"));
-             BufferedWriter dirFile = new BufferedWriter(new FileWriter("directions.txt"))) {
-            for (Location location : locations.values()) {
-                locFile.write(location.getLocationID() + "," + location.getDescription() + "\n");
-
-                for (String direction : location.getExits().keySet()) {
-                    if (!direction.equalsIgnoreCase("Q")) {
-                        dirFile.write(location.getLocationID() + "," + direction + "," + location.getExits().get(direction) + "\n");
-                    }
-                }
-            }
-        }
+//        try (BufferedWriter locFile = new BufferedWriter(new FileWriter("locations.txt"));
+//             BufferedWriter dirFile = new BufferedWriter(new FileWriter("directions.txt"))) {
+//            for (Location location : locations.values()) {
+//                locFile.write(location.getLocationID() + "," + location.getDescription() + "\n");
+//
+//                for (String direction : location.getExits().keySet()) {
+//                    if (!direction.equalsIgnoreCase("Q")) {
+//                        dirFile.write(location.getLocationID() + "," + direction + "," + location.getExits().get(direction) + "\n");
+//                    }
+//                }
+//            }
+//        }
         /*
         * try-finally does behave differently than try-with-resources
         * the try-finally can throw at the .close() back up the call stack
@@ -35,6 +36,24 @@ public class Locations implements Map<Integer, Location> {
         * possible in the try-finally first error could be hidden by the exception when closing the stream, close() probably not the root cause of error
         * try-with-resources ensures that the first error is the one being thrown back
         **/
+
+        try (DataOutputStream locFile = new DataOutputStream(new BufferedOutputStream(new FileOutputStream("locations.dat")))) {
+            for (Location location : locations.values()) {
+                locFile.writeInt(location.getLocationID());
+                locFile.writeUTF(location.getDescription());
+                System.out.println("Writing location " + location.getLocationID() + " : " + location.getDescription());
+
+                locFile.writeInt(location.getExits().size() - 1);
+                System.out.println("Writing " + (location.getExits().size() - 1) + " exits.");
+
+                for (String direction : location.getExits().keySet())
+                    if (!direction.equalsIgnoreCase("Q")) {
+                        System.out.println("\t\t" + direction + "," + location.getExits().get(direction));
+                        locFile.writeUTF(direction);
+                        locFile.writeInt(location.getExits().get(direction));
+                    }
+            }
+        }
 
     }
 
@@ -44,7 +63,7 @@ public class Locations implements Map<Integer, Location> {
     *
     * You can throw unchecked exceptions in an initialization block but not checked ones
     * */
-    static { // static block ensures data is initialized only once, can be used throughout the class
+    static { // static block ensures data is initialized only once, can be used throughout the class. Runs before main method()
             /*
             * Why don't we need to worry about closing FileReader stream?
             *
