@@ -67,9 +67,9 @@ public class Locations implements Map<Integer, Location> {
             /*
             * Why don't we need to worry about closing FileReader stream?
             *
-            * When the scanner is lcosed its close() method also takes care of closing any stream that it was using
+            * When the scanner is closed its close() method also takes care of closing any stream that it was using
             * provided that the stream object implements the closable interface and the FileReader does.
-            * It's probably more accurate to refer to it as readbale instead of a stream because, the source for a
+            * It's probably more accurate to refer to it as readable instead of a stream because, the source for a
             * scanner must be an object that implements the readable interface.
             * */
         try (Scanner scanner = new Scanner(new BufferedReader(new FileReader("locations_big.txt")))) {
