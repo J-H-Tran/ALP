@@ -1,14 +1,12 @@
 package academy.learnprogramming;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,11 +14,48 @@ import java.util.Set;
 
 public class Locations implements Map<Integer, Location> {
     private static Map<Integer, Location> locations = new LinkedHashMap<>();
+    private static Map<Integer, IndexRecord> index = new LinkedHashMap<>();
 
     public static void main(String[] args) throws IOException {
-        try (ObjectOutputStream locFile = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("locations.dat")))) {
+        try (RandomAccessFile rao = new RandomAccessFile("location_rand.dat", "rwd")) {
+            rao.writeInt(locations.size());                         // 3, because our index contains: locationID, offset, length/size of record
+            int indexSize = locations.size() * 3 * Integer.BYTES;   // (number of locations)(ints contained in ea record)(size of Integer)
+            int locationStart = (int) (indexSize + rao.getFilePointer() + Integer.BYTES);   // calculate current position of file pointer, account for the Integer we're about to write
+            rao.writeInt(locationStart);
+
+            long indexStart = rao.getFilePointer();
+
+            int startPointer = locationStart;   // set the offset for the first location to a variable, used to calculate the location record's length after writing to file
+            rao.seek(startPointer); //used to move the file pointer to the first location's offset, only needed for first location because after it's just sequential data processing
+
             for (Location location : locations.values()) {
-                locFile.writeObject(location);
+                rao.writeInt(location.getLocationID());
+                rao.writeUTF(location.getDescription());
+                StringBuilder s = new StringBuilder();
+
+                for (String direction : location.getExits().keySet()) {
+                    if (!direction.equalsIgnoreCase("Q")) {
+                        s.append(direction)
+                                .append(",")
+                                .append(location.getExits().get(direction))
+                                .append(",");
+                    }
+                }
+
+                rao.writeUTF(s.toString()); // write data, writing the exits
+
+                IndexRecord record = new IndexRecord(startPointer, (int) (rao.getFilePointer() - startPointer));    // create IndexRecord, length = current position - start position
+                index.put(location.getLocationID(), record);    // add IndexRecord for the location using locationID as key
+
+                startPointer = (int) rao.getFilePointer();      // update start pointer to next position
+                // we wrote the location to the file and we can now write our index
+            }
+
+            rao.seek(indexStart);   // seeking offset we saved previously on line 26, we're going back to that location again
+            for (Integer locationID : index.keySet()) { // looping through all index records and writing them to file
+                rao.writeInt(locationID);
+                rao.writeInt(index.get(locationID).getStartByte());
+                rao.writeInt(index.get(locationID).getLength());
             }
         }
     }
