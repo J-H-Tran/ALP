@@ -9,3 +9,4 @@
 
 # Ignore compiled code
 out/
+.idea/
