@@ -1,5 +1,6 @@
 package academy.learnprogramming;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -7,7 +8,7 @@ import java.util.Scanner;
 public class Main {
     private static Locations locations = new Locations();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         /*
         * Change the program to allow players to type full words, or phrases, then move to the
         * correct location based upon their input.
@@ -26,15 +27,23 @@ public class Main {
         vocabulary.put("WEST", "W");
         vocabulary.put("EAST", "E");
 
-        int loc = 1;
-        while(true) {
-            System.out.println(locations.get(loc).getDescription());
+        /*
+        * This is a basic shell of a game that could potentially have thousands of different locations and we haven't
+        * got any problems with the amount of memory we're consuming for that because we're only loading in the
+        * locations one at a time directly from our random access file.
+        *
+        * In other words, they're loaded on demand
+        * */
+        Location currentLocation = locations.getLocation(1);
 
-            if(loc == 0) {
+        while(true) {
+            System.out.println(currentLocation.getDescription());
+
+            if(currentLocation.getLocationID() == 0) {
                 break;
             }
 
-            Map<String, Integer> exits = locations.get(loc).getExits();
+            Map<String, Integer> exits = currentLocation.getExits();
             System.out.print("Available exits are ");
             for(String exit: exits.keySet()) {
                 System.out.print(exit + ", ");
@@ -53,12 +62,12 @@ public class Main {
             }
 
             if(exits.containsKey(direction)) {
-                loc = exits.get(direction);
+                currentLocation = locations.getLocation(currentLocation.getExits().get(direction));
 
             } else {
                 System.out.println("You cannot go in that direction");
             }
         }
-
+        locations.close();
     }
 }
