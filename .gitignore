@@ -3,3 +3,6 @@
 
 # Ignore java class files
 *.class
+
+# Ignore data files (binary data)
+*.dat
