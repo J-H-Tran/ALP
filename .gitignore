@@ -6,6 +6,7 @@
 
 # Ignore data files (binary data)
 *.dat
+*.iml
 
 # Ignore compiled code
 /JavaMasterclassBuchalka/Projects/FileInputOutput/out
