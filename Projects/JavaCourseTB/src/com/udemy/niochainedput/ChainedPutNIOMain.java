@@ -57,6 +57,43 @@ public class ChainedPutNIOMain {
             readBuffer.flip();
             System.out.println("int1 = " + readBuffer.getInt());
 
+            // calculate all start positions
+            byte[] outputString = "Hello, World!".getBytes();
+            long str1Pos = 0;
+            long newInt1Pos = outputString.length;
+            long newInt2Pos = newInt1Pos + Integer.BYTES;
+            byte[] outputString2 = "Nice to meet you".getBytes();
+            long str2Pos = newInt2Pos + Integer.BYTES;
+            long newInt3Pos = str2Pos + outputString2.length;
+
+            // initialize buffer
+            ByteBuffer intBuffer = ByteBuffer.allocate(Integer.BYTES);
+
+            intBuffer.putInt(245);          // Write to buffer
+
+            intBuffer.flip();
+            binChannel.position(newInt1Pos);// At start pos for 1st Integer
+            binChannel.write(intBuffer);    // Read from buffer, writes to the channel
+
+            intBuffer.flip();
+            intBuffer.putInt(-98765);       // Write to buffer
+
+            intBuffer.flip();
+            binChannel.position(int2Pos);   // At next pos for 2nd Integer
+            binChannel.write(intBuffer);    // Read from buffer, writes to the channel
+
+            intBuffer.flip();
+            intBuffer.putInt(1000);         // Write to buffer
+
+            intBuffer.flip();
+            binChannel.position(newInt3Pos);// At next pos for 3rd Integer
+            binChannel.write(intBuffer);    // Read from buffer, writes to the channel
+
+            binChannel.position(str1Pos);
+            binChannel.write(ByteBuffer.wrap(outputString)); // wrap() takes care of flipping the buffer for us
+            binChannel.position(str2Pos);
+            binChannel.write(ByteBuffer.wrap(outputString2));
+
             /*ByteBuffer readBuffer = ByteBuffer.allocate(100);   // initialize readBuffer with capacity of 100
             channel.read(readBuffer);   // reads data from file and Write to buffer, in this case the entire file at once. Smart enough to stop reading when EOF is reached
 
