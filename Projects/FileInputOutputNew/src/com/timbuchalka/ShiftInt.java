@@ -1,4 +1,4 @@
-package com.udemy.nio;
+package com.timbuchalka;
 
 /**
  * Created by timbuchalka on 19/05/2016.

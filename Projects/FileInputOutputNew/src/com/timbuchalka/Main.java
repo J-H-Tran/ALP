@@ -1,4 +1,4 @@
-package com.udemy.nio;
+package com.timbuchalka;
 
 import java.util.HashMap;
 import java.util.Map;
