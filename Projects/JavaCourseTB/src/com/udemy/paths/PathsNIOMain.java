@@ -22,11 +22,33 @@ public class PathsNIOMain {
         Path path = FileSystems.getDefault().getPath("WorkingDirectoryFile.txt");
         printFile(path);
 
-        Path filePath = FileSystems.getDefault().getPath("files","SubDirectoryFile.txt");
+//        Path filePath = FileSystems.getDefault().getPath("files","SubDirectoryFile.txt");
+        Path filePath = Paths.get(".","files","SubDirectoryFile.txt");  // current working directory, file directory, filename
         printFile(filePath);
 
         filePath = Paths.get("D:\\JavaMasterclassBuchalka\\Projects\\OutThere.txt");
         printFile(filePath);
+
+        filePath = Paths.get(".");
+        System.out.println(filePath.toAbsolutePath());
+
+        // generally, good practice to normalize a file path before using it.
+        Path path2 = FileSystems.getDefault().getPath(".", "files", "..", "SubDirectoryFile.txt");
+        System.out.println(path2.normalize().toAbsolutePath());
+        printFile(path2.normalize());
+
+        /*
+        * Why did was java.nio.file introduced in Java8 when Java7 had java.io.File class?
+        *
+        * Although useful there were some issues with the java.io.File class
+        * Many methods didn't throw exceptions or provide specific error messages when they fail
+        * File.delete() - couldn't tell if file didn't exist or wrong permissions when it fails
+        * File.rename() - worked differently on different platforms and Java was meant to be platform independent
+        * No support for symbolic links (a file that points to another file, often used in networks to point to remote locations)
+        * Can't get metadata about a file, ownership, security, permissions
+        * Many methods don't perform well when working with lots of data, possible to hang when requesting list of all files in a directory
+        * Walking a directory is problematic since there's no support for symbolic links
+        * */
     }
 
     private static void printFile(Path path) {
