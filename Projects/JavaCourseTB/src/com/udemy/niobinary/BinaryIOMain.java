@@ -65,6 +65,7 @@ public class BinaryIOMain {
             long numBytesRead = channel.read(buffer); // reads 'Hello World!' from file back into byte array
             if (buffer.hasArray()) {
                 System.out.println("byte buffer = " + new String(buffer.array()));
+//                System.out.println("byte buffer = " + new String(outputBytes));
             }
 
             //Absolute Read
