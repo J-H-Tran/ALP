@@ -25,9 +25,9 @@ public class Location implements Serializable{
         this.exits.put("Q", 0);
     }
 
-//    public void addExit(String direction, int location) {
-//        exits.put(direction, location);
-//    }
+    protected void addExit(String direction, int location) {
+        exits.put(direction, location);
+    }
 
     public int getLocationID() {
         return locationID;
@@ -40,7 +40,5 @@ public class Location implements Serializable{
     public Map<String, Integer> getExits() {
         return new LinkedHashMap<String, Integer>(exits);
     }
-    protected void addExit(String direction, int location) {
-        exits.put(direction, location);
-    }
+
 }
