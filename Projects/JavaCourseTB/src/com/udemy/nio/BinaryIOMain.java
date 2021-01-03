@@ -1,4 +1,4 @@
-package com.udemy.niobinary;
+package com.udemy.nio;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
