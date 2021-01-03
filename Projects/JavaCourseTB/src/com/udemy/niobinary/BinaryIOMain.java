@@ -69,17 +69,28 @@ public class BinaryIOMain {
             if (buffer.hasArray()) {
                 System.out.println("byte buffer = " + new String(buffer.array()));
             }
-            intBuffer.flip();
-            numBytesRead = channel.read(intBuffer); // writes the buffer
 
+            //Absolute Read
             intBuffer.flip();
-            System.out.println(intBuffer.getInt()); // reads the buffer
+            numBytesRead = channel.read(intBuffer);
+            System.out.println(intBuffer.getInt(0));
 
             intBuffer.flip();
             numBytesRead = channel.read(intBuffer);
+            System.out.println(intBuffer.getInt(0));
 
-            intBuffer.flip();
-            System.out.println(intBuffer.getInt());
+            //Relative Read
+//            intBuffer.flip();
+//            numBytesRead = channel.read(intBuffer); // writes the buffer
+//
+//            intBuffer.flip();
+//            System.out.println(intBuffer.getInt()); // reads the buffer
+//
+//            intBuffer.flip();
+//            numBytesRead = channel.read(intBuffer);
+//
+//            intBuffer.flip();
+//            System.out.println(intBuffer.getInt());
 
             channel.close();
             ra.close();
