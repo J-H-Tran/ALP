@@ -17,16 +17,18 @@ public class ChainedPutNIOMain {
             ByteBuffer buffer = ByteBuffer.allocate(100);   // creates buffer with capacity/limit of 100
             byte[] outputBytes = "Hello World!".getBytes(); // initialize byte array with byte data of 'Hello World!' String
 
+            buffer.put(outputBytes);    // first 12 bytes of buffer filled with byte array data
+            long int1Pos = outputBytes.length; // tracking buffer position right at each putInt()
+            buffer.putInt(245);         // next 4 bytes holds Integer 245
+            long int2Pos = int1Pos + Integer.BYTES;
+            buffer.putInt(-98765);      // next 4 bytes holds Integer -98765
 
-//            buffer.put(outputBytes);    // first 12 bytes of buffer filled with byte array data
-//            buffer.putInt(245);         // next 4 bytes holds Integer 245
-//            buffer.putInt(-98765);      // next 4 bytes holds Integer -98765
-//
             byte[] outputBytes2 = "Nice to meet you".getBytes(); // initialize a second byte array with String 16 bytes long
-//            buffer.put(outputBytes2);   // next 16 bytes filled with byte data from second String
-//            buffer.putInt(1000);        // next 4 bytes holds Integer 1000, buffer position 40
+            buffer.put(outputBytes2);   // next 16 bytes filled with byte data from second String
+            long int3Pos = int2Pos + Integer.BYTES + outputBytes2.length;
+            buffer.putInt(1000);        // next 4 bytes holds Integer 1000, buffer position 40
 
-            buffer.put(outputBytes).putInt(245).putInt(-98765).put(outputBytes2).putInt(1000); // put chaining is possible because put() also returns the buffer position
+//            buffer.put(outputBytes).putInt(245).putInt(-98765).put(outputBytes2).putInt(1000); // put chaining is possible because put() also returns the buffer position
             buffer.flip();              // reset buffer position to 0
             binChannel.write(buffer);   // write() writes to file & reads from buffer. Read data from buffer and write into data.dat file
 
@@ -34,7 +36,28 @@ public class ChainedPutNIOMain {
             RandomAccessFile ra = new RandomAccessFile("data.dat", "rwd");  // specify read mode
             FileChannel channel = ra.getChannel();  // gets a Channel object to act as bridge between buffer and data entities
 
-            ByteBuffer readBuffer = ByteBuffer.allocate(100);   // initialize readBuffer with capacity of 100
+            ByteBuffer readBuffer = ByteBuffer.allocate(Integer.BYTES);
+            channel.position(int3Pos);  // specify start position in the channel from data source, bridge to data.dat
+            channel.read(readBuffer);   // read() from file and write to buffer 4 bytes
+
+            readBuffer.flip();
+            System.out.println("int3 = " + readBuffer.getInt()); // read from buffer and output to console
+
+            readBuffer.flip();
+            channel.position(int2Pos);
+            channel.read(readBuffer);
+
+            readBuffer.flip();
+            System.out.println("int2 = " + readBuffer.getInt());
+
+            readBuffer.flip();
+            channel.position(int1Pos);
+            channel.read(readBuffer);
+
+            readBuffer.flip();
+            System.out.println("int1 = " + readBuffer.getInt());
+
+            /*ByteBuffer readBuffer = ByteBuffer.allocate(100);   // initialize readBuffer with capacity of 100
             channel.read(readBuffer);   // reads data from file and Write to buffer, in this case the entire file at once. Smart enough to stop reading when EOF is reached
 
             readBuffer.flip();          // readBuffer position 0, switch to Read from buffer
@@ -47,7 +70,7 @@ public class ChainedPutNIOMain {
             byte[] inputString2 = new byte[outputBytes2.length];
             readBuffer.get(inputString2);
             System.out.println("inputString2 = " + new String(inputString2));
-            System.out.println("int3 = " + readBuffer.getInt());
+            System.out.println("int3 = " + readBuffer.getInt());*/
 
         } catch (IOException e) {
             e.printStackTrace();
