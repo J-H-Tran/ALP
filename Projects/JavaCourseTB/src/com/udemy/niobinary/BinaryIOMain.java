@@ -27,14 +27,11 @@ public class BinaryIOMain {
              FileChannel binChannel = binFile.getChannel()) {
 
             byte[] outputBytes = "Hello World!".getBytes(); // byte array of string we're going to output
-            ByteBuffer buffer = ByteBuffer.wrap(outputBytes); // creates byte buffer from byte array, wraps byte array into the buffer (buffer is backed by byte array)
-                                                            // modifications to the buffer will reflect in the array and vice versa
-                                                            // when we call the wrap() on an array we are saying that
-                                                            // 1) At runtime we want to use the byte array as the buffer
-                                                            // 2) sets the position of the buffer to zero
-                                                            // 3) buffer's capacity weill be set to the byte array's length
-                                                            // 4) buffer's mark will be undefined, can be set later
-            int numBytes = binChannel.write(buffer);
+            ByteBuffer buffer = ByteBuffer.allocate(outputBytes.length); // allocate buffer based on length
+            buffer.put(outputBytes);                        // copy contents of byte array into buffer, new byte array is created and that is used to back the buffer
+                // ^writes to buffer, need to flip() between R & W operations
+            buffer.flip();
+            int numBytes = binChannel.write(buffer); // reads from buffer
             System.out.println("numBytes written: " + numBytes);
 
             ByteBuffer intBuffer = ByteBuffer.allocate(Integer.BYTES); // calling .allocate() passing it size for our buffer to be so we can write any int to our buffer
