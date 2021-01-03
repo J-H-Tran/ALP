@@ -61,14 +61,39 @@ public class BinaryIOMain {
             System.out.println("numBytes written: " + numBytes);
 
             RandomAccessFile ra = new RandomAccessFile("data.dat", "rwd");
-            byte[] b = new byte[outputBytes.length];
-            ra.read(b);
-            System.out.println(new String(b));
+            FileChannel channel = ra.getChannel();
+            outputBytes[0] = 'a';
+            outputBytes[1] = 'b';
+            buffer.flip();
+            long numBytesRead = channel.read(buffer); // reads 'Hello World!' from file back into byte array
+            if (buffer.hasArray()) {
+                System.out.println("byte buffer = " + new String(buffer.array()));
+            }
+            intBuffer.flip();
+            numBytesRead = channel.read(intBuffer); // writes the buffer
 
-            long int1 = ra.readInt();
-            long int2 = ra.readInt();
-            System.out.println(int1);
-            System.out.println(int2);
+            intBuffer.flip();
+            System.out.println(intBuffer.getInt()); // reads the buffer
+
+            intBuffer.flip();
+            numBytesRead = channel.read(intBuffer);
+
+            intBuffer.flip();
+            System.out.println(intBuffer.getInt());
+
+            channel.close();
+            ra.close();
+//            System.out.println("outputBytes = " + new String(outputBytes));
+
+//            RandomAccessFile ra = new RandomAccessFile("data.dat", "rwd");
+//            byte[] b = new byte[outputBytes.length];
+//            ra.read(b);
+//            System.out.println(new String(b));
+//
+//            long int1 = ra.readInt();
+//            long int2 = ra.readInt();
+//            System.out.println(int1);
+//            System.out.println(int2);
 
         } catch (IOException e) {
             e.printStackTrace();
