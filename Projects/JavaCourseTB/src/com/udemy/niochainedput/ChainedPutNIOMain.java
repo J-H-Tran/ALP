@@ -57,8 +57,19 @@ public class ChainedPutNIOMain {
             readBuffer.flip();
             System.out.println("int1 = " + readBuffer.getInt());
 
+            RandomAccessFile copyFile = new RandomAccessFile("datacopy.dat", "rw");
+            FileChannel copyChannel = copyFile.getChannel();
+            channel.position(0);    // need to set the channel position to 0 before calling transferFrom()
+//            long numTransferred = copyChannel.transferFrom(channel, 0, channel.size()); // position here is relative to current position
+            long numTransferred = channel.transferTo(0, channel.size(), copyChannel);
+            System.out.println("Number of bytes transferred = " + numTransferred);
+
+            channel.close();
+            copyChannel.close();
+            ra.close();
+
             // calculate all start positions
-            byte[] outputString = "Hello, World!".getBytes();
+            /*byte[] outputString = "Hello, World!".getBytes();
             long str1Pos = 0;
             long newInt1Pos = outputString.length;
             long newInt2Pos = newInt1Pos + Integer.BYTES;
@@ -92,7 +103,7 @@ public class ChainedPutNIOMain {
             binChannel.position(str1Pos);
             binChannel.write(ByteBuffer.wrap(outputString)); // wrap() takes care of flipping the buffer for us
             binChannel.position(str2Pos);
-            binChannel.write(ByteBuffer.wrap(outputString2));
+            binChannel.write(ByteBuffer.wrap(outputString2));*/
 
             /*ByteBuffer readBuffer = ByteBuffer.allocate(100);   // initialize readBuffer with capacity of 100
             channel.read(readBuffer);   // reads data from file and Write to buffer, in this case the entire file at once. Smart enough to stop reading when EOF is reached
