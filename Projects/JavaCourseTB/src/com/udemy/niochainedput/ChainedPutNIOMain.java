@@ -17,14 +17,16 @@ public class ChainedPutNIOMain {
             ByteBuffer buffer = ByteBuffer.allocate(100);   // creates buffer with capacity/limit of 100
             byte[] outputBytes = "Hello World!".getBytes(); // initialize byte array with byte data of 'Hello World!' String
 
-            buffer.put(outputBytes);    // first 12 bytes of buffer filled with byte array data
-            buffer.putInt(245);         // next 4 bytes holds Integer 245
-            buffer.putInt(-98765);      // next 4 bytes holds Integer -98765
 
+//            buffer.put(outputBytes);    // first 12 bytes of buffer filled with byte array data
+//            buffer.putInt(245);         // next 4 bytes holds Integer 245
+//            buffer.putInt(-98765);      // next 4 bytes holds Integer -98765
+//
             byte[] outputBytes2 = "Nice to meet you".getBytes(); // initialize a second byte array with String 16 bytes long
-            buffer.put(outputBytes2);   // next 16 bytes filled with byte data from second String
-            buffer.putInt(1000);        // next 4 bytes holds Integer 1000, buffer position 40
+//            buffer.put(outputBytes2);   // next 16 bytes filled with byte data from second String
+//            buffer.putInt(1000);        // next 4 bytes holds Integer 1000, buffer position 40
 
+            buffer.put(outputBytes).putInt(245).putInt(-98765).put(outputBytes2).putInt(1000); // put chaining is possible because put() also returns the buffer position
             buffer.flip();              // reset buffer position to 0
             binChannel.write(buffer);   // write() writes to file & reads from buffer. Read data from buffer and write into data.dat file
 
