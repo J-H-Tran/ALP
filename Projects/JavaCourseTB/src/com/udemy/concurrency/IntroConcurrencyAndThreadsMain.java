@@ -94,6 +94,28 @@ public class IntroConcurrencyAndThreadsMain {
         * When given the choice there isn't a right or wrong
         * Most developers use Runnable because it's more flexible and it is recommended
         * */
+
+        /* Interrupts
+        * We interrupt a thread when we want it to stop what it was doing and to do something else
+        * More often than not, when we do that we interrupt a thread because we want it to terminate.
+        *
+        * Suppose we have a thread that is monitoring a buffer for data that another thread is fetching
+        * So, when the fetching thread determines that there's no more data to fetch, for whatever reason,
+        * we can interrupt the monitoring thread and terminate it because it's not needed anymore.
+        *
+        * There are 2 ways for threads to notice that they've been interrupted:
+        *
+        * 1) catch the InterruptedException
+        * 2) when the run() doesn't call any methods that throws the InterruptedException then,
+        *   it should call the interrupted() periodically to check whether it's been interrupted
+        *   and the method returns true when another thread has interrupted it
+        *
+        * Q. How does one thread interrupt another thread?
+        *
+        * It calls the interrupt() on the Thread instance that it wants to interrupt
+        * Meaning, that it will need a reference to the Thread instance to be able to call the interrupt method on
+        * the other thread.
+        * */
     }
 }
 /* Introduction
