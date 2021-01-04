@@ -57,7 +57,7 @@ public class ReadDirectoryNIOMain {
         }
 
         // FileStore
-        // FileSystems.getDefault() returns a FileSystem obj
+        // FileSystems.getDefault() returns a FileSystem obj - gets the working directory for the application returns a Path
         Iterable<FileStore> stores = FileSystems.getDefault().getFileStores();
         for (FileStore store : stores) {
             System.out.println(store); // gets name and drive letter of file stores, could parse to get just drive letter but risky if it ever changes
@@ -130,5 +130,40 @@ public class ReadDirectoryNIOMain {
         Path parentPath = Paths.get("D:\\JavaMasterclassBuchalka\\Projects\\JavaCourseTB\\Examples");
         Path childPath = Paths.get("dir\\file.txt");
         System.out.println(parentPath.resolve(childPath) + " <- using Path instances");
+
+        /*
+        * When working with many java.io methods we need to use a File instance
+        * there are several ways to do this but some of them have drawbacks
+        * ^ that's another reason to consider java.nio classes
+        *
+        * Below is a hack that is more robust than many other solutions
+        * */
+
+        // this works because when passing an empty string to the File constructor it translates it to the current directory for us, and that's the working directory of app
+        File workingDirectory = new File("").getAbsoluteFile();
+        System.out.println("working directory = " + workingDirectory);
+
+        /*
+        * Listing contents of a directory is different
+        * DirectoryStream for java.nio
+        * with java.io file.list() and file.listFiles()
+        *
+        * list() returns array of String
+        * listFiles() returns array of File
+        * can pass additional args for filtering to list()
+        * */
+
+        System.out.println("\nPrint Dir2 contents using list()");
+        File dir2File = new File(workingDirectory, "Examples\\Dir2");
+        String[] dir2Contents = dir2File.list();
+        for (int i = 0; i < dir2Contents.length; i++) {
+            System.out.println("i + " + i + ": " + dir2Contents[i]);
+        }
+
+        System.out.println("\nPrint Dir2 contents using listFiles()");
+        File[] dir2Files = dir2File.listFiles();
+        for (int i = 0; i < dir2Files.length; i++) {
+            System.out.println("i + " + i + ": " + dir2Files[i].getName()); // getName() returns last segment of the filepath which is the file name
+        }
     }
 }
