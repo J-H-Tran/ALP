@@ -61,11 +61,17 @@ public class IntroConcurrencyAndThreadsMain {
             @Override
             public void run() {
                 System.out.println(ANSI_RED + "Hello from Anon implements Runnable");
+                try {
+                    anotherThread.join(); // joins this thread (myRunnableTread) to anotherThread
+                    System.out.println(ANSI_RED + "anotherThread terminated, I will continue execution"); // executes after anotherThread has terminated
+                } catch (InterruptedException e) {
+                    System.out.println(ANSI_RED + "I couldn't wait, I was interrupted");
+                }
             }
         });
         myRunnableThread.start();
 
-        anotherThread.interrupt(); // main thread calls interrupt() on the Thread instance that it is interrupting
+//        anotherThread.interrupt(); // main thread calls interrupt() on the Thread instance that it is interrupting
 
         System.out.println(ANSI_PURPLE + "Hello again from main thread"); // even though this line is after the Thread instance it's possible that we see it's output before the thread's output
 
@@ -117,6 +123,14 @@ public class IntroConcurrencyAndThreadsMain {
         * It calls the interrupt() on the Thread instance that it wants to interrupt
         * Meaning, that it will need a reference to the Thread instance to be able to call the interrupt method on
         * the other thread.
+        * */
+
+        /* Joining threads
+        *
+        * In a scenario where we know that a thread can't execute until another thread is terminated, such as
+        * waiting to fetch data, rather than wake up the thread periodically to see if there's any data
+        * we can join that thread to the thread fetching data. So, when we join one thread to the other
+        * the first thread will wait for the second thread to terminate and then execute.
         * */
     }
 }
