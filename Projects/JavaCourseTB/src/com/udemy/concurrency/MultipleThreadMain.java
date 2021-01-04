@@ -89,7 +89,7 @@ class CountdownThread extends Thread {
 *
 * We can't synchronize the constructor. It doesn't make sense anyway because only one thread can construct an instance
 * and until the constructor has finished executing the instance won't be available for other threads to use.
-*
+*-----------------------------------------------------------------------------------------------------------------------
 * Every Java obj has an 'intrinsic lock' aka 'monitor'
 * so we can synchronize a block of statements that work with an obj by forcing threads to acquire the obj's lock before
 * they execute the statement block.
@@ -107,5 +107,22 @@ class CountdownThread extends Thread {
 * Essentially, the thread stack will only ever contain primitive values and obj references (and function references).
 *
 * We can also synchronize static methods and also use static obj, when we do this the lock that is used is owned
-* by the class obj associated with the obj's class
+* by the class obj associated with the obj's class.
+*-----------------------------------------------------------------------------------------------------------------------
+* Synchronization is 'reentrant'. This means that if a thread acquires an obj's lock, and within the synchronized code,
+* it calls a method that's using the same obj to synchronize some code. Then the thread can keep executing because,
+* it already has the obj's lock. A thread can acquire a lock it already owns.
+*
+* Critical section - refers to the code that is referencing a shared resource, like a variable.
+* Only one thread at a time should be able to execute a critical section.
+*
+* Thread safe - A developer has synchronized all the critical sections within the code so that we don't have to worry
+* about thread interference.
+*
+* When synchronizing code, we should only synchronize code that absolutely needs to be synchronized. We don't want threads
+* to be unnecessarily suspended/blocked because that can affect performance and user experience.
+*
+* Methods that can only be called within synchronized code:
+* wait(), notify(), notifyAll()
+* consumer producer example
 * */
