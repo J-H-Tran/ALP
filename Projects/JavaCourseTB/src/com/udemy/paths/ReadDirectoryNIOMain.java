@@ -1,5 +1,6 @@
 package com.udemy.paths;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
@@ -23,7 +24,8 @@ public class ReadDirectoryNIOMain {
         // since there is only 1 method to implement we can convert the above lines to a lambda
         DirectoryStream.Filter<Path> filter = p -> Files.isRegularFile(p);
 
-        Path directory = FileSystems.getDefault().getPath("FileTree\\Dir2");
+//        Path directory = FileSystems.getDefault().getPath("FileTree\\Dir2");
+        Path directory = FileSystems.getDefault().getPath("FileTree" + File.separator + "Dir2"); // now supports all OS's
 
         // newDirectoryStream() returns a directory stream of type Path. Returns only directory's direct descendants
         // can filter DirectoryStream for specific file types by specifying 2nd arg using glob syntax for file pattern matching
@@ -34,5 +36,12 @@ public class ReadDirectoryNIOMain {
         } catch (IOException | DirectoryIteratorException e) { // good practice to explicitly catch DirectoryIteratorException when iterating over DirectoryStream
             System.out.println(e.getMessage());
         }
+
+        // best practice to never hard-code file separator since may not work for all platforms
+        String separator = File.separator;
+        System.out.println(separator);
+        separator = FileSystems.getDefault().getSeparator();
+        System.out.println(separator);
+
     }
 }
