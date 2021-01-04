@@ -43,5 +43,15 @@ public class ReadDirectoryNIOMain {
         separator = FileSystems.getDefault().getSeparator();
         System.out.println(separator);
 
+        try {
+            // createTempFile(prefix, suffix, fileAttr)
+            // 3rd arg is for file attributes that we can specify but for temp files there's often no reason to do so
+            Path tempFile = Files.createTempFile("myapp", ".appext");
+            // the resulting path name is always associated with the default file system, can be specified to store somewhere else
+            // of course, can also create temp directory
+            System.out.println("Temporary file path = " + tempFile.toAbsolutePath());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
