@@ -33,7 +33,7 @@ public class PathsNIOMain {
         System.out.println(filePath.toAbsolutePath());
 
         // generally, good practice to normalize a file path before using it.
-        Path path2 = FileSystems.getDefault().getPath(".", "files", "..", "SubDirectoryFile.txt");
+        Path path2 = FileSystems.getDefault().getPath(".", "files", "..", "files", "SubDirectoryFile.txt");
         System.out.println(path2.normalize().toAbsolutePath());
         printFile(path2.normalize());
 
@@ -49,6 +49,18 @@ public class PathsNIOMain {
         * Many methods don't perform well when working with lots of data, possible to hang when requesting list of all files in a directory
         * Walking a directory is problematic since there's no support for symbolic links
         * */
+
+        Path path3 = FileSystems.getDefault().getPath("doesnotexist.txt"); // until we try to access the file, the file is abstract
+        System.out.println(path3.toAbsolutePath()); // initial exception can be thrown when tyring to create a buffer for the file, only then does it matter if the file exists
+
+        Path path4 = Paths.get("D:\\JavaMasterclassBuchalka\\longbottom\\OutThere.txt");
+        System.out.println(path4.toAbsolutePath());
+
+        // check if file or file directory exists before using it
+        filePath = FileSystems.getDefault().getPath("files");
+        System.out.println("Exists = " + Files.exists(filePath));
+        System.out.println("Exists = " + Files.exists(path4));
+        System.out.println("Exists = " + Files.exists(path3));
     }
 
     private static void printFile(Path path) {
