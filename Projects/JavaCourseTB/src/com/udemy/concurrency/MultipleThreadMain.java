@@ -31,6 +31,19 @@ class Countdown {
                 color = ThreadColor.ANSI_GREEN;
         }
 
+        /* local variable vs shared instance
+        * Each thread has it's own copy of a local variable separate from other threads. It's own local copy,
+        * which exists in it's own Thread Stack
+        *
+        * But, when we declare a variable private like above, each obj instance will share the same instance of that variable
+        * which exists in the applications Heap
+        * So any change made by one thread will be seen by other threads when it wants to access that variable
+        *
+        * The for loop below is actually multiple operations of execution and it's possible for a thread to be suspended
+        * between each step of the for loop iteration
+        * When threads interact with one another like this over a single resource it's known as 'thread interference' aka 'race condition'
+        * Problem doesn't arise if the threads were only reading the resource, only when at least one of the threads is writing/updating it
+        * */
         for (i = 10; i > 0; i--) {
             System.out.println(color + Thread.currentThread().getName() + ": i = " + i);
         }
