@@ -13,6 +13,7 @@ public class IntroConcurrencyAndThreadsMain {
         *   creating a subclass of the Thread class and Overriding the run()
         *   Rather than creating a thread instance we create an instance of a subclass
         *
+        * - create class that extends Thread class
         * - Need to create the instance of Thread class
         * - Then call the .start() to run the thread
         *
