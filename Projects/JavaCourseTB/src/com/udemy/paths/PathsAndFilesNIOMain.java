@@ -10,7 +10,7 @@ public class PathsAndFilesNIOMain {
 
     public static void main(String[] args) {
         try {
-            Path sourceFile = FileSystems.getDefault().getPath("Examples", "file1.txt");
+            /*Path sourceFile = FileSystems.getDefault().getPath("Examples", "file1.txt");
             Path copyFile = FileSystems.getDefault().getPath("Examples", "file1copy.txt");
 //            Files.copy(sourceFile, copyFile);   // Errors if file to be copied already exists
             Files.copy(sourceFile, copyFile, StandardCopyOption.REPLACE_EXISTING); // 3rd arg will copy file even if it already exists
@@ -18,10 +18,13 @@ public class PathsAndFilesNIOMain {
             // copying a directory, only the folder and not the files it contains. To do that you have to walk the file tree
             sourceFile = FileSystems.getDefault().getPath("Examples", "Dir1");
             copyFile = FileSystems.getDefault().getPath("Examples", "Dir4");
-            Files.copy(sourceFile, copyFile, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(sourceFile, copyFile, StandardCopyOption.REPLACE_EXISTING);*/
 
             // moving files
-
+            Path fileToMove = FileSystems.getDefault().getPath("Examples", "file1copy.txt");
+            // must specify full path of destination not enough to only specify directory
+            Path destination = FileSystems.getDefault().getPath("Examples", "Dir1", "file1copy.txt");
+            Files.move(fileToMove, destination);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
