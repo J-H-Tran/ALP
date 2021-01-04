@@ -21,7 +21,7 @@ public class MultipleThreadMain {
 class Countdown {
     private int i; // different results when threads share an instance of a variable, unexpected behavior
 
-    public synchronized void doCountdown() { // to make a method synchronized we add the synchronized keyword
+    public void doCountdown() { // to make a method synchronized we add the synchronized keyword
         String color;
 
         switch (Thread.currentThread().getName()) {
@@ -48,8 +48,11 @@ class Countdown {
         * When threads interact with one another like this over a single resource it's known as 'thread interference' aka 'race condition'
         * Problem doesn't arise if the threads were only reading the resource, only when at least one of the threads is writing/updating it
         * */
-        for (i = 10; i > 0; i--) {
-            System.out.println(color + Thread.currentThread().getName() + ": i = " + i);
+
+        synchronized (color) { // doesn't work since it's a local variable not shared by the threads, ea thread has it's own color obj
+            for (i = 10; i > 0; i--) {
+                System.out.println(color + Thread.currentThread().getName() + ": i = " + i);
+            }
         }
     }
 }
