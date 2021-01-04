@@ -49,7 +49,8 @@ class Countdown {
         * Problem doesn't arise if the threads were only reading the resource, only when at least one of the threads is writing/updating it
         * */
 
-        synchronized (color) { // doesn't work since it's a local variable not shared by the threads, ea thread has it's own color obj
+//        synchronized (color) { // doesn't work since it's a local variable not shared by the threads, ea thread has it's own color obj
+        synchronized (this) { // synchronizing on the obj shared by the 2 threads, this way only one thread can execute the for loop at a time
             for (i = 10; i > 0; i--) {
                 System.out.println(color + Thread.currentThread().getName() + ": i = " + i);
             }
@@ -97,4 +98,14 @@ class CountdownThread extends Thread {
 * releases the lock. Then only one of the waiting threads can get the lock and continue executing.
 *
 * Only objects have an intrinsic lock so we cannot synchronize a primitive value.
+* The only exception to this rule are String obj
+*
+* When using a local obj variable the obj references are stored in the thread stack but the obj values are stored in the heap
+* Since the threads will each create their own copy of the local 'String color' the obj references will be different and
+* there won't be any interference even though the obj values are in the heap.
+*
+* Essentially, the thread stack will only ever contain primitive values and obj references (and function references).
+*
+* We can also synchronize static methods and also use static obj, when we do this the lock that is used is owned
+* by the class obj associated with the obj's class
 * */
