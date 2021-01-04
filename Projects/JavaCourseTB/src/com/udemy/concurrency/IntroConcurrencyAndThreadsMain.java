@@ -62,8 +62,8 @@ public class IntroConcurrencyAndThreadsMain {
             public void run() {
                 System.out.println(ANSI_RED + "Hello from Anon implements Runnable");
                 try {
-                    anotherThread.join(); // joins this thread (myRunnableTread) to anotherThread
-                    System.out.println(ANSI_RED + "anotherThread terminated, I will continue execution"); // executes after anotherThread has terminated
+                    anotherThread.join(2000); // join myRunnableThread to anotherThread, join() can take a timeout arg if anotherThread doesn't terminate for some reason
+                    System.out.println(ANSI_RED + "anotherThread terminated or timed out, I will continue execution"); // executes after anotherThread has terminated
                 } catch (InterruptedException e) {
                     System.out.println(ANSI_RED + "I couldn't wait, I was interrupted");
                 }
@@ -131,6 +131,14 @@ public class IntroConcurrencyAndThreadsMain {
         * waiting to fetch data, rather than wake up the thread periodically to see if there's any data
         * we can join that thread to the thread fetching data. So, when we join one thread to the other
         * the first thread will wait for the second thread to terminate and then execute.
+        * */
+
+        /* setPriority()
+        *
+        * More of a suggestion to the JVM rather than a command
+        * some OS's may not support this at all and will ignore it
+        * Never assume that setting priority will for threads to run in a particular order
+        * It is ultimately up to the JVM and the OS as to how that runs
         * */
     }
 }

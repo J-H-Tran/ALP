@@ -16,11 +16,11 @@ public class AnotherThread extends Thread {
         * the OS may not support the granularity that we may be asking for, ie. does not support [ns]
         * */
         try {
-            Thread.sleep(3000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             System.out.println(ANSI_BLUE + "Another thread woke me up");
             return; // terminates this thread instance after it's been interrupted
         }
-        System.out.println(ANSI_BLUE + "3 seconds have passed and I'm awake");
+        System.out.println(ANSI_BLUE + "5 seconds have passed and I'm awake");
     }
 }
