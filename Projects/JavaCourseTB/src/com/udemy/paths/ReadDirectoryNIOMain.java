@@ -62,5 +62,12 @@ public class ReadDirectoryNIOMain {
             System.out.println(store); // gets name and drive letter of file stores, could parse to get just drive letter but risky if it ever changes
             System.out.println(store.name() + "\n"); // gets the name of the drives (file stores)
         }
+
+        Iterable<Path> rootPaths = FileSystems.getDefault().getRootDirectories();
+        for (Path path : rootPaths) {
+            System.out.println(path); // prints the drive letters on a Windows OS, typically don't need to do this in a use-case
+            // because when an application is installed it remembers/can find out where it lives on the file system
+            // if it is needed the user can tell it where to save/load files to/from
+        }
     }
 }
