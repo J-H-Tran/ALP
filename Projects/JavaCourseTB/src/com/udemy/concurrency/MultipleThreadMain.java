@@ -2,11 +2,13 @@ package com.udemy.concurrency;
 
 public class MultipleThreadMain {
     public static void main(String[] args) {
-        Countdown countdown = new Countdown();
+        Countdown countdown1 = new Countdown();
+        Countdown countdown2 = new Countdown();
 
-        CountdownThread t1 = new CountdownThread(countdown);
+        // no interference if we pass the threads their own obj to work on but not practical in real world applications
+        CountdownThread t1 = new CountdownThread(countdown1);
         t1.setName("Thread 1");
-        CountdownThread t2 = new CountdownThread(countdown);
+        CountdownThread t2 = new CountdownThread(countdown2);
         t1.setName("Thread 2");
 
         t1.start();
