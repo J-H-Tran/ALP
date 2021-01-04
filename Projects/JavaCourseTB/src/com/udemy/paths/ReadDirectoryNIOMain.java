@@ -165,5 +165,13 @@ public class ReadDirectoryNIOMain {
         for (int i = 0; i < dir2Files.length; i++) {
             System.out.println("i + " + i + ": " + dir2Files[i].getName()); // getName() returns last segment of the filepath which is the file name
         }
+
+        /*
+        * Key takeaways with java.nio and java.io :
+        *
+        * - Use java.nio when working with a file system
+        * - when it comes to reading and writing file contents, often times java.io streams are the better choice
+        * ^should really benchmark and decide
+        * */
     }
 }
