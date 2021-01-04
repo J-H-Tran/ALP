@@ -65,6 +65,8 @@ public class IntroConcurrencyAndThreadsMain {
         });
         myRunnableThread.start();
 
+        anotherThread.interrupt(); // main thread calls interrupt() on the Thread instance that it is interrupting
+
         System.out.println(ANSI_PURPLE + "Hello again from main thread"); // even though this line is after the Thread instance it's possible that we see it's output before the thread's output
 
         /*
