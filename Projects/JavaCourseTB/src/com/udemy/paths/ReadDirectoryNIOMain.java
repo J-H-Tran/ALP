@@ -12,13 +12,16 @@ public class ReadDirectoryNIOMain {
 * A directory's content is the list of files that it contains*/
     public static void main(String[] args) {
 
-        DirectoryStream.Filter<Path> filter =
+        /*DirectoryStream.Filter<Path> filter =
                 new DirectoryStream.Filter<Path>() { // must implement accept() method when using DirectoryStream.Filter
                                                     // returns true for a path, the path is going to be included in teh DirectoryStream results
                     public boolean accept(Path path) throws IOException {
                         return Files.isRegularFile(path); // test to see if the particular path is a regular file
                     }
-                };
+                };*/
+        // using lambda expression
+        // since there is only 1 method to implement we can convert the above lines to a lambda
+        DirectoryStream.Filter<Path> filter = p -> Files.isRegularFile(p);
 
         Path directory = FileSystems.getDefault().getPath("FileTree\\Dir2");
 
