@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,6 +53,14 @@ public class ReadDirectoryNIOMain {
             System.out.println("Temporary file path = " + tempFile.toAbsolutePath());
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        }
+
+        // FileStore
+        // FileSystems.getDefault() returns a FileSystem obj
+        Iterable<FileStore> stores = FileSystems.getDefault().getFileStores();
+        for (FileStore store : stores) {
+            System.out.println(store); // gets name and drive letter of file stores, could parse to get just drive letter but risky if it ever changes
+            System.out.println(store.name() + "\n"); // gets the name of the drives (file stores)
         }
     }
 }
