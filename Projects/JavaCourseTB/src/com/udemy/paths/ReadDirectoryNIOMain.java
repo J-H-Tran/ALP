@@ -8,6 +8,7 @@ import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ReadDirectoryNIOMain {
 /*
@@ -102,5 +103,31 @@ public class ReadDirectoryNIOMain {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+
+        /*
+        * Map common java.io operations to java.nio
+        *
+        * Paths:
+        * rather than using java.io.File it's better to use java.nio.Path
+        * We can use the file.toPath() to convert an old style file instance to the preferred java.nio.Path instance
+        * */
+
+        File file = new File("Examples\\file.txt");
+        Path convertedPath = file.toPath(); // once we've got a Path obj we can use it with all the java.nio classes and methods
+        System.out.println("Converted path = \"" + convertedPath + "\" File instance filepath to Path instance filepath");
+        // Recall: it doesn't matter whether the stream that we passed to the File constructor points to an existing file
+        // it's a path and there isn't an issue UNTIL we try to access it and even then sometimes it's fine, ie. when creating a new file
+
+        File parent = new File("D:\\JavaMasterclassBuchalka\\Projects\\JavaCourseTB\\Examples");
+        File resolvedFile = new File(parent, "dir\\file.txt"); // parent instance used when invoking resolve() and child arg
+        System.out.println(resolvedFile.toPath()); // pass File instance as the parent and String as the child
+
+        resolvedFile = new File("D:\\JavaMasterclassBuchalka\\Projects\\JavaCourseTB\\Examples", "dir\\file.txt");
+        System.out.println(resolvedFile.toPath());
+
+        // The Path instances below is equivalent to the File instances above
+        Path parentPath = Paths.get("D:\\JavaMasterclassBuchalka\\Projects\\JavaCourseTB\\Examples");
+        Path childPath = Paths.get("dir\\file.txt");
+        System.out.println(parentPath.resolve(childPath) + " <- using Path instances");
     }
 }
