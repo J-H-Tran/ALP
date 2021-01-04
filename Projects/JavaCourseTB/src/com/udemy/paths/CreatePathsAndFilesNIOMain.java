@@ -14,9 +14,12 @@ public class CreatePathsAndFilesNIOMain {
             Files.createFile(fileToCreate);*/ // exception to rule, can't be used to create directories
 
             // creating directory
-            Path dirToCreate = FileSystems.getDefault().getPath("Examples", "Dir4");
-            Files.createDirectory(dirToCreate);
+            /*Path dirToCreate = FileSystems.getDefault().getPath("Examples", "Dir4");
+            Files.createDirectory(dirToCreate);*/
 
+            // create directories
+            Path dirToCreate = FileSystems.getDefault().getPath("Examples", "Dir2\\Dir3\\Dir4\\Dir5\\Dir6");
+            Files.createDirectories(dirToCreate);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
