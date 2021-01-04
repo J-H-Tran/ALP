@@ -114,6 +114,7 @@ public class ReadDirectoryNIOMain {
 
         File file = new File("Examples\\file.txt");
         Path convertedPath = file.toPath(); // once we've got a Path obj we can use it with all the java.nio classes and methods
+        // ^ mapping io and nio methods
         System.out.println("Converted path = \"" + convertedPath + "\" File instance filepath to Path instance filepath");
         // Recall: it doesn't matter whether the stream that we passed to the File constructor points to an existing file
         // it's a path and there isn't an issue UNTIL we try to access it and even then sometimes it's fine, ie. when creating a new file
