@@ -1,7 +1,6 @@
 package com.udemy.concurrency;
 
-import static com.udemy.concurrency.ThreadColor.ANSI_GREEN;
-import static com.udemy.concurrency.ThreadColor.ANSI_PURPLE;
+import static com.udemy.concurrency.ThreadColor.*;
 
 public class IntroConcurrencyAndThreadsMain {
 
@@ -16,11 +15,34 @@ public class IntroConcurrencyAndThreadsMain {
         *
         * - Need to create the instance of Thread class
         * - Then call the .start() to run the thread
+        *
+        * 2) Using the Runnable Interface
+        *   An advantage of this is that it only requires us to implement a single method, run()
+        *   Instead of implementing the run() of a class that subclasses Thread
+        *   we can have any class implement the Runnable Interface and then
+        *   all we have to do is add the run() to that class and write executable code inside it
+        *
+        * - create class that implements Runnable
+        * - create an instance of Thread class
+        * - pass an instance of class implementing Runnable to Thread constructor
+        * - call Thread instance's start()
+        *
+        * Just as we can create threads by subclassing the Thread class we can also have an anonymous class implement Runnable
+        * and pass an instance of it to the Thread constructor.
+        *
+        * A thread will terminate when it returns from its run() implicitly because it reaches the methods end
+        * or explicitly when it executes a return state.
+        * A common mistake when creating and running threads is to call the Thread instance's run() instead of start()
+        * we have to implement run() but we don't call it instead, we call start(), JVM calls run() for us.
+        *
+        * When we use run() instead of start() the application wont crash instead of executing the code on a new thread
+        * the code will execute in the thread where it's been called. We can set the thread's name with setName() to distinguish between threads
         * */
 
         System.out.println(ANSI_PURPLE + "Hello from main thread");
 
         Thread anotherThread = new AnotherThread(); // creates the instance of Thread
+        anotherThread.setName("== Another Thread ==");
         anotherThread.start(); // JVM calls the @Override run() of the subclass that extends Thread class, the Thread instance
 
         // using anonymous class
@@ -29,6 +51,19 @@ public class IntroConcurrencyAndThreadsMain {
                 System.out.println(ANSI_GREEN + "Hello from Anon");
             }
         }.start();
+
+        // using Runnable Interface
+//        Thread myRunnableThread = new Thread(new MyRunnable());
+//        myRunnableThread.start();
+
+        // using anonymous class with Runnable Interface
+        Thread myRunnableThread = new Thread(new MyRunnable() {
+            @Override
+            public void run() {
+                System.out.println(ANSI_RED + "Hello from Anon implements Runnable");
+            }
+        });
+        myRunnableThread.start();
 
         System.out.println(ANSI_PURPLE + "Hello again from main thread"); // even though this line is after the Thread instance it's possible that we see it's output before the thread's output
 
@@ -48,6 +83,17 @@ public class IntroConcurrencyAndThreadsMain {
         * Note: we CANNOT guarantee the order in which the threads will be executed since it depends on the way your machine handles it's scheduling of the threads
         * */
 //        anotherThread.start(); <- throws IllegalThreadStateException when trying to start a thread that's already running
+
+        /*
+        * Q. Why use subclass instance of Thread vs class implementing Runnable Interface?
+        *
+        * - Most of the time, developers use runnable way of creating threads because it's more convenient and
+        *   there's also many methods in the Java API that want a Runnable instance passed to them
+        * - Since lambda expressions were introduced it's become even more convenient to use anonymous Runnable instances
+        *
+        * When given the choice there isn't a right or wrong
+        * Most developers use Runnable because it's more flexible and it is recommended
+        * */
     }
 }
 /* Introduction
