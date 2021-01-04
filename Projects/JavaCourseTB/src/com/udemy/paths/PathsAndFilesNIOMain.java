@@ -21,9 +21,14 @@ public class PathsAndFilesNIOMain {
             Files.copy(sourceFile, copyFile, StandardCopyOption.REPLACE_EXISTING);*/
 
             // moving files
-            Path fileToMove = FileSystems.getDefault().getPath("Examples", "file1copy.txt");
+            /*Path fileToMove = FileSystems.getDefault().getPath("Examples", "file1copy.txt");
             // must specify full path of destination not enough to only specify directory
             Path destination = FileSystems.getDefault().getPath("Examples", "Dir1", "file1copy.txt");
+            Files.move(fileToMove, destination);*/
+
+            // renaming a file, is effectively moving it with a different name. source and destination directories have to be the same
+            Path fileToMove = FileSystems.getDefault().getPath("Examples", "file1.txt");
+            Path destination = FileSystems.getDefault().getPath("Examples", "file2.txt");
             Files.move(fileToMove, destination);
         } catch (IOException e) {
             System.out.println(e.getMessage());
