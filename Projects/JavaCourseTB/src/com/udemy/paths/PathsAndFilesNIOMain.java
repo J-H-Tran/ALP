@@ -33,7 +33,7 @@ public class PathsAndFilesNIOMain {
 
             // renaming a file, is effectively moving it with a different name. source and destination directories have to be the same
             /*Path fileToMove = FileSystems.getDefault().getPath("Examples", "file1.txt");
-            Path destination = FileSystems.getDefault().getPath("Examples", "file2.txt");
+            Path destination = FileSystems.getDefault().getPath("Examples", "file1.txt");
             Files.move(fileToMove, destination);*/
         } catch (IOException e) {
             System.out.println(e.getMessage());
