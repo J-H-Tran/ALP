@@ -1,9 +1,53 @@
 package com.udemy.concurrency;
 
+import static com.udemy.concurrency.ThreadColor.ANSI_GREEN;
+import static com.udemy.concurrency.ThreadColor.ANSI_PURPLE;
+
 public class IntroConcurrencyAndThreadsMain {
 
     public static void main(String[] args) {
+        /*2 ways to create a thread:
+        *
+        * 1) create an instance of the Thread class
+        *   What we want to do is kick off a thread that's going to run some code
+        *   so we need a way to tell the thread what code we want to run and we do that by
+        *   creating a subclass of the Thread class and Overriding the run()
+        *   Rather than creating a thread instance we create an instance of a subclass
+        *
+        * - Need to create the instance of Thread class
+        * - Then call the .start() to run the thread
+        * */
 
+        System.out.println(ANSI_PURPLE + "Hello from main thread");
+
+        Thread anotherThread = new AnotherThread(); // creates the instance of Thread
+        anotherThread.start(); // JVM calls the @Override run() of the subclass that extends Thread class, the Thread instance
+
+        // using anonymous class
+        new Thread() {
+            public void run() {
+                System.out.println(ANSI_GREEN + "Hello from Anon");
+            }
+        }.start();
+
+        System.out.println(ANSI_PURPLE + "Hello again from main thread"); // even though this line is after the Thread instance it's possible that we see it's output before the thread's output
+
+        /*
+        * Rather than creating a named class of AnotherThread we could've created an anonymous class
+        * this is useful if we only every want to run the code once. In that case, an anonymous class would work
+        * and is probably easier to configure.
+        * But, if we intend to run on the same code several times then creating a class, such as above, for the thread would make more sense and have a better result
+        *
+        * We are NOT allowed to start same instance of a thread more than once
+        * If we want to execute the code in run() more than once, cannot start a Thread instance that is already running
+        * we'd have to create a new instance of the subclass each time we want to run it
+        *
+        * When using an anonymous class we have to start the thread immediately
+        * that's another consideration when deciding to use a named or anonymous class
+        *
+        * Note: we CANNOT guarantee the order in which the threads will be executed since it depends on the way your machine handles it's scheduling of the threads
+        * */
+//        anotherThread.start(); <- throws IllegalThreadStateException when trying to start a thread that's already running
     }
 }
 /* Introduction
@@ -58,5 +102,5 @@ public class IntroConcurrencyAndThreadsMain {
  *
  * Note: When working with threads we are at the mercy of the JVM and the OS when it comes to when the threads are
  * scheduled to run. Output varies from run to run and we might not see what someone else sees when they run the application
- * on their machine
+ * on their machine. Reason why working with threads can be tricky
  * */
