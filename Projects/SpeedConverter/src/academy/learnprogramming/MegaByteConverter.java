@@ -1,7 +1,5 @@
 package academy.learnprogramming;
 
-import javax.management.MBeanAttributeInfo;
-
 public class MegaByteConverter {
 
     public static void printMegaBytesAndKiloBytes(int kilioBytes) {
