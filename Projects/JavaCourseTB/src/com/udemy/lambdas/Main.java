@@ -101,4 +101,11 @@ class Employee {
  * By using a lambda expression, instead of creating a class that implements Runnable or using an anonymous class
  * we're able to reduce the lines of code we have to write and can focus on what we care about, the
  * code that we want to run.
+ *
+ * For Comparator we can use a lambda even though there are 2 methods we can implement because the equals()
+ * will always have a default implementation. All classes descend from Object and Object contains equals() and
+ * that means that every instance that implements Comparator will already have an implementation of equals().
+ * Therefore, Comparator really only has a single method that always has to be implemented by classes that implement
+ * the Comparator. For that reason it's a functional interface and we can use lambdas instead of an anonymous inner
+ * class.
  * */
