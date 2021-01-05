@@ -45,8 +45,11 @@ class MyProducer implements Runnable {
                 System.out.println(color + " Adding.." + num);
 
                 bufferLock.lock(); // acquires the lock, if it can't thread is suspended
-                buffer.add(num); // write numbers to the buffer
-                bufferLock.unlock(); // releases the lock, we're responsible for this. doesn't happen automatically unlike with synchronized blocks
+                try{
+                    buffer.add(num); // write numbers to the buffer
+                } finally {
+                    bufferLock.unlock(); // releases the lock, we're responsible for this. doesn't happen automatically unlike with synchronized blocks
+                }
                 // if we forget to unlock(), threads waiting for a lock with be stuck in blocked
                 Thread.sleep(random.nextInt(1000)); // because we sleep here we give the consumer thread a chance to remove the string before producer runs again
             } catch (InterruptedException e) {
@@ -56,8 +59,11 @@ class MyProducer implements Runnable {
         System.out.println(color + " Adding EOF and exiting..");
 
         bufferLock.lock();
-        buffer.add("EOF"); // write EOF to let consumers know that there won't be anymore data to process
-        bufferLock.unlock();
+        try {
+            buffer.add("EOF"); // write EOF to let consumers know that there won't be anymore data to process
+        } finally {
+            bufferLock.unlock();
+        }
     }
 }
 
@@ -78,19 +84,20 @@ class MyConsumer implements Runnable {
 
         while (true) { // loop until reads EOF from the buffer
             bufferLock.lock();
-            if (buffer.isEmpty()) { // checks to see if there's anything to read in the buffer, continues to loop until there is something to read
-                bufferLock.unlock();
-                continue;
-            }
+            try {
+                if (buffer.isEmpty()) { // checks to see if there's anything to read in the buffer, continues to loop until there is something to read
+                    continue;
+                }
 
-            if (buffer.get(0).equals(EOF)) { // checks to see if buffer is at EOF, if it is breaks out of loop
-                System.out.println(color + " Exiting.."); // checking for and not removing EOF in case other threads look for EOF to stop looping
+                if (buffer.get(0).equals(EOF)) { // checks to see if buffer is at EOF, if it is breaks out of loop
+                    System.out.println(color + " Exiting.."); // checking for and not removing EOF in case other threads look for EOF to stop looping
+                    break;
+                } else {
+                    System.out.println(color + " Removed " + buffer.remove(0)); // print, then continue checking the buffer for data
+                }
+            } finally {
                 bufferLock.unlock();
-                break;
-            } else {
-                System.out.println(color + " Removed " + buffer.remove(0)); // print, then continue checking the buffer for data
             }
-            bufferLock.unlock();
         }
     }
 }
@@ -121,5 +128,13 @@ class MyConsumer implements Runnable {
  * locks.Lock Interface
  * ---------------------------------------------------------------------------------------------------------------------
  * Reentrant lock obj keep track of how many times they locked so if the same thread gets the same lock twice it
- * has to release it twice before another thread can get the lock
+ * has to release it twice before another thread can get the lock.
+ *
+ * Recommended: enclose the critical sections of code within try-finally
+ * One reason for doing so is that we only need to call unlock in one place.
+ * The other reason is that it's possible for the critical section code to throw an exception that we're not explicitly
+ * handling using a catch and we want to make sure that we have released any locks we're holding if that occurs.
+ *
+ * reason why lock() is outside is that we should't try to unlock() until we actually own the lock.
+ * if we try to unlock() without a lock throws exception IllegalMonitorState
  * */
