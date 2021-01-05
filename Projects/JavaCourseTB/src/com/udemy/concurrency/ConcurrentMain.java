@@ -30,21 +30,21 @@ public class ConcurrentMain {
         executorService.execute(consumer1);
         executorService.execute(consumer2);
 
-        // anonymous callable class
+        // anonymous callable class, Callable didn't run until first 3 threads finished since not being managed by ExecutorService which limited active threads to 3
         Future<String> future = executorService.submit(new Callable<String>() {
             @Override
             public String call() throws Exception {
-                System.out.println(ThreadColor.ANSI_RED+"I'm being printed from Callable");
-                return "Callable result";
+                System.out.println(ThreadColor.ANSI_RED + "I'm being printed from Callable");
+                return ThreadColor.ANSI_RED + "Callable result";
             }
         });
 
         try {
-            System.out.println(future.get()); // get() blocks until a result is available
+            System.out.println(future.get()); // get() blocks until a result is available. when calling from main, app will appear frozen until data available. don't use in UI app
         } catch (ExecutionException e) {
-            System.out.println("Something went wrong");
+            System.out.println(ThreadColor.ANSI_RED + "Something went wrong");
         } catch (InterruptedException e) {
-            System.out.println("Thread running was unterrupted");
+            System.out.println(ThreadColor.ANSI_RED + "Thread running was interrupted");
         }
 
         // even after main thread terminated it remained alive, we have to shut down the ExecutorService when we no longer need it.
@@ -74,7 +74,7 @@ class MyProducer implements Runnable {
                 System.out.println(color + " Adding.." + num);
 
                 bufferLock.lock(); // acquires the lock, if it can't thread is suspended
-                try{
+                try {
                     buffer.add(num); // write numbers to the buffer
                 } finally {
                     bufferLock.unlock(); // releases the lock, we're responsible for this. doesn't happen automatically unlike with synchronized blocks
