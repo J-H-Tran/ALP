@@ -3,6 +3,7 @@ package com.udemy.concurrency;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -17,14 +18,14 @@ public class ConcurrentMain {
 
     // producer consumer example
     public static void main(String[] args) {
-        List<String> buffer = new ArrayList<>();
+        ArrayBlockingQueue<String> buffer = new ArrayBlockingQueue<>(6);
         ReentrantLock bufferLock = new ReentrantLock();
 
         ExecutorService executorService = Executors.newFixedThreadPool(3);
 
-        MyProducer producer = new MyProducer(buffer, ThreadColor.ANSI_PURPLE, bufferLock);
-        MyConsumer consumer1 = new MyConsumer(buffer, ThreadColor.ANSI_CYAN, bufferLock);
-        MyConsumer consumer2 = new MyConsumer(buffer, ThreadColor.ANSI_GREEN, bufferLock);
+        MyProducer producer = new MyProducer(buffer, ThreadColor.ANSI_PURPLE);
+        MyConsumer consumer1 = new MyConsumer(buffer, ThreadColor.ANSI_CYAN);
+        MyConsumer consumer2 = new MyConsumer(buffer, ThreadColor.ANSI_GREEN);
 
         executorService.execute(producer);
         executorService.execute(consumer1);
@@ -55,14 +56,12 @@ public class ConcurrentMain {
 }
 
 class MyProducer implements Runnable {
-    private List<String> buffer;
+    private ArrayBlockingQueue<String> buffer;
     private String color;
-    private ReentrantLock bufferLock;
 
-    public MyProducer(List<String> buffer, String color, ReentrantLock bufferLock) {
+    public MyProducer(ArrayBlockingQueue<String> buffer, String color) {
         this.buffer = buffer; // buffer shared by consumers
         this.color = color;
-        this.bufferLock = bufferLock;
     }
 
     public void run() { // creating buffer
@@ -72,13 +71,7 @@ class MyProducer implements Runnable {
         for (String num : nums) {
             try {
                 System.out.println(color + " Adding.." + num);
-
-                bufferLock.lock(); // acquires the lock, if it can't thread is suspended
-                try {
-                    buffer.add(num); // write numbers to the buffer
-                } finally {
-                    bufferLock.unlock(); // releases the lock, we're responsible for this. doesn't happen automatically unlike with synchronized blocks
-                }
+                buffer.put(num); // add() & remove() will throw an Exception if operation cannot happen immediately if another thread has the queue locked, put() & take() will block
                 // if we forget to unlock(), threads waiting for a lock with be stuck in blocked
                 Thread.sleep(random.nextInt(1000)); // because we sleep here we give the consumer thread a chance to remove the string before producer runs again
             } catch (InterruptedException e) {
@@ -87,11 +80,9 @@ class MyProducer implements Runnable {
         }
         System.out.println(color + " Adding EOF and exiting..");
 
-        bufferLock.lock();
         try {
-            buffer.add("EOF"); // write EOF to let consumers know that there won't be anymore data to process
-        } finally {
-            bufferLock.unlock();
+            buffer.put("EOF"); // write EOF to let consumers know that there won't be anymore data to process
+        } catch (InterruptedException e) {
         }
     }
 }
@@ -99,39 +90,32 @@ class MyProducer implements Runnable {
 // normally, wouldn't be using loops like this in threads with real world applications. Use wait(), notify(), notifyAll() or system to manage threads
 // just for demonstration
 class MyConsumer implements Runnable {
-    private List<String> buffer;
+    private ArrayBlockingQueue<String> buffer;
     private String color;
-    private ReentrantLock bufferLock;
 
-    public MyConsumer(List<String> buffer, String color, ReentrantLock bufferLock) { // accepts buffer shared from the producer and color String
+    public MyConsumer(ArrayBlockingQueue<String> buffer, String color) { // accepts buffer shared from the producer and color String
         this.buffer = buffer;
         this.color = color;
-        this.bufferLock = bufferLock;
     }
 
     public void run() { // processing buffer
 
-        int cnt = 0;
         while (true) { // loop until reads EOF from the buffer
-            if (bufferLock.tryLock()) {
+            synchronized (buffer) { // even though ArrayBlockingQueue is thread-safe thread interference can still occur at a critical section, take care of synchronization
                 try {
                     if (buffer.isEmpty()) { // checks to see if there's anything to read in the buffer, continues to loop until there is something to read
                         continue;
                     }
-                    System.out.println(color + "counter = " + cnt);
-                    cnt = 0;
-                    if (buffer.get(0).equals(EOF)) { // checks to see if buffer is at EOF, if it is breaks out of loop
+                    if (buffer.peek().equals(EOF)) { // peek() doesn't block if queue is empty it returns null
                         System.out.println(color + " Exiting.."); // checking for and not removing EOF in case other threads look for EOF to stop looping
                         break;
                     } else {
-                        System.out.println(color + " Removed " + buffer.remove(0)); // print, then continue checking the buffer for data
+                        System.out.println(color + " Removed " + buffer.take()); // print, then continue checking the buffer for data
                     }
-                } finally {
-                    bufferLock.unlock();
+                } catch (InterruptedException e) {
                 }
-            } else {
-                cnt++;
             }
+
         }
     }
 }
@@ -215,4 +199,7 @@ class MyConsumer implements Runnable {
  * submit() - used when we want to receive a value from a thread that we're executing
  * accepts a Callable obj that's similar to Runnable except that it can return a value
  * the value can be return as an obj of type Future
+ *
+ * when using a thread-safe class like ArrayBlockingQueue, we can be confident that only one thread can run a
+ * synchronized method at a time. But we still need to be mindful of thread interference in critical sections of our code
  * */
