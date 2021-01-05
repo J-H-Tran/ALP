@@ -82,21 +82,26 @@ class MyConsumer implements Runnable {
 
     public void run() { // processing buffer
 
+        int cnt = 0;
         while (true) { // loop until reads EOF from the buffer
-            bufferLock.lock();
-            try {
-                if (buffer.isEmpty()) { // checks to see if there's anything to read in the buffer, continues to loop until there is something to read
-                    continue;
+            if (bufferLock.tryLock()) {
+                try {
+                    if (buffer.isEmpty()) { // checks to see if there's anything to read in the buffer, continues to loop until there is something to read
+                        continue;
+                    }
+                    System.out.println(color + "counter = " + cnt);
+                    cnt = 0;
+                    if (buffer.get(0).equals(EOF)) { // checks to see if buffer is at EOF, if it is breaks out of loop
+                        System.out.println(color + " Exiting.."); // checking for and not removing EOF in case other threads look for EOF to stop looping
+                        break;
+                    } else {
+                        System.out.println(color + " Removed " + buffer.remove(0)); // print, then continue checking the buffer for data
+                    }
+                } finally {
+                    bufferLock.unlock();
                 }
-
-                if (buffer.get(0).equals(EOF)) { // checks to see if buffer is at EOF, if it is breaks out of loop
-                    System.out.println(color + " Exiting.."); // checking for and not removing EOF in case other threads look for EOF to stop looping
-                    break;
-                } else {
-                    System.out.println(color + " Removed " + buffer.remove(0)); // print, then continue checking the buffer for data
-                }
-            } finally {
-                bufferLock.unlock();
+            } else {
+                cnt++;
             }
         }
     }
@@ -137,4 +142,14 @@ class MyConsumer implements Runnable {
  *
  * reason why lock() is outside is that we should't try to unlock() until we actually own the lock.
  * if we try to unlock() without a lock throws exception IllegalMonitorState
+ *
+ * tryLock() - test if lock is available. If it is acquire the lock and continue executing else,
+ * thread won't block and can alternatively execute some different code.
+ *
+ * Lock Interface doesn't provide 'first come first served' but some implementations do.
+ * Reentrant lock constructor accepts a fairness arg, when set to true will try to be fair and give lock to the thread
+ * that waited the longest. If a thread comes along and finds out that there are hundreds of threads waiting and it
+ * knows the lock is a fair lock it might choose to terminate instead of blocking on the lock.
+ *
+ * We can also check for the number of threads waiting for a lock with Reentrant lock with getQueuedLength()
  * */
