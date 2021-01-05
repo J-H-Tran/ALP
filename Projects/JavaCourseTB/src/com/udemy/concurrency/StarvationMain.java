@@ -1,7 +1,9 @@
 package com.udemy.concurrency;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class StarvationMain {
-    private static Object lock = new Object();
+    private static ReentrantLock lock = new ReentrantLock(true);
 
     public static void main(String[] args) {
         Thread t1 = new Thread(new Worker(ThreadColor.ANSI_RED), "Priority 10");
@@ -34,9 +36,12 @@ public class StarvationMain {
         @Override
         public void run() {
             for (int i = 0; i < 100; i++) {
-                synchronized (lock) {
+                lock.lock();
+                try {
                     System.out.format(threadColor+"%s: runCount = %d\n", Thread.currentThread().getName(), runCount++);
                     // execute critical section of code
+                } finally {
+                    lock.unlock(); // finally guarantees that unlock() is called to release lock
                 }
             }
         }
@@ -63,4 +68,13 @@ public class StarvationMain {
  *
  * for deadlocks, order in which locks are acquired is important
  * for starvation, order in which threads gets to run is important
+ *
+ * Solving thread starvation
+ * fair lock, which will try to enforce 'first come first served'
+ * Considerations of fair lock:
+ * - Only fairness in acquiring the lock is guaranteed not fairness in thread scheduling
+ * - tryLock() does not honor fairness
+ * - when using in an app with numerous threads performance will be impacted.
+ *  When ensuring fairness there has to be an extra layer of processing that manages which thread gets the lock when
+ *  there are a lot of threads competing for a lock
  * */
