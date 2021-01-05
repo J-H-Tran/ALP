@@ -3,6 +3,11 @@ package com.udemy.concurrency;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.udemy.concurrency.ConcurrentMain.EOF;
@@ -14,14 +19,38 @@ public class ConcurrentMain {
     public static void main(String[] args) {
         List<String> buffer = new ArrayList<>();
         ReentrantLock bufferLock = new ReentrantLock();
-        MyProducer producer = new MyProducer(buffer, ThreadColor.ANSI_BLUE, bufferLock);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
+
+        MyProducer producer = new MyProducer(buffer, ThreadColor.ANSI_PURPLE, bufferLock);
         MyConsumer consumer1 = new MyConsumer(buffer, ThreadColor.ANSI_CYAN, bufferLock);
         MyConsumer consumer2 = new MyConsumer(buffer, ThreadColor.ANSI_GREEN, bufferLock);
 
-        new Thread(producer).start();
-        new Thread(consumer1).start();
-        new Thread(consumer2).start();
+        executorService.execute(producer);
+        executorService.execute(consumer1);
+        executorService.execute(consumer2);
 
+        // anonymous callable class
+        Future<String> future = executorService.submit(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                System.out.println(ThreadColor.ANSI_RED+"I'm being printed from Callable");
+                return "Callable result";
+            }
+        });
+
+        try {
+            System.out.println(future.get()); // get() blocks until a result is available
+        } catch (ExecutionException e) {
+            System.out.println("Something went wrong");
+        } catch (InterruptedException e) {
+            System.out.println("Thread running was unterrupted");
+        }
+
+        // even after main thread terminated it remained alive, we have to shut down the ExecutorService when we no longer need it.
+        executorService.shutdown(); // when called, will wait for any executing tasks to terminate. (this is an orderly shutdown)
+        // shutdownNow() to shut down immediately, will try to halt any remaining tasks or throw away any in the queue
+        // no real guarantee, some thread might never terminate so it's always best to terminate in an orderly fashion
     }
 }
 
@@ -132,7 +161,7 @@ class MyConsumer implements Runnable {
  * So, instead of using synchronization we can prevent thread interference using class that implement the java.util.concurrent
  * locks.Lock Interface
  * ---------------------------------------------------------------------------------------------------------------------
- * Reentrant lock obj keep track of how many times they locked so if the same thread gets the same lock twice it
+ * ReentrantLock obj keep track of how many times they locked so if the same thread gets the same lock twice it
  * has to release it twice before another thread can get the lock.
  *
  * Recommended: enclose the critical sections of code within try-finally
@@ -147,9 +176,43 @@ class MyConsumer implements Runnable {
  * thread won't block and can alternatively execute some different code.
  *
  * Lock Interface doesn't provide 'first come first served' but some implementations do.
- * Reentrant lock constructor accepts a fairness arg, when set to true will try to be fair and give lock to the thread
+ * ReentrantLock constructor accepts a fairness arg, when set to true will try to be fair and give lock to the thread
  * that waited the longest. If a thread comes along and finds out that there are hundreds of threads waiting and it
  * knows the lock is a fair lock it might choose to terminate instead of blocking on the lock.
  *
- * We can also check for the number of threads waiting for a lock with Reentrant lock with getQueuedLength()
+ * We can also check for the number of threads waiting for a lock with ReentrantLock with getQueuedLength()
+ * ---------------------------------------------------------------------------------------------------------------------
+ * ExecutorService Interface
+ * we use implementations of this interface to manage threads for us so that we don't have to explicitly create and start threads
+ * Implementations provided by JDK manages things like thread scheduling and also optimize creation of threads
+ * which can generally be expensive in terms of performance and memory. Provide Runnable obj to the service because
+ * we have to code the tasks we want to execute on background threads. The ExecutorService implementations allows us
+ * to focus on the code we want to run without the fuss of managing threads and their lifecycles.
+ *
+ * We create an implementation of ExecutorService and give it the tasks we want to run without worrying
+ * about the details of how the tasks will actually be run. The ExecutorService implementations make use of
+ * thread pools.
+ *
+ * Thread pool - a managed set of threads
+ * it reduces overhead of thread creation especially, in applications that use a large number of threads
+ * it may also limit the number of threads that are active, running, or blocked at any particular time
+ * when using a certain types of thread pools an app cannot run wild and create an excessive amount of threads
+ *
+ * In Java we use thread pools through the ExecutorService implementations.
+ * It is possible to make custom thread pools with one of the ThreadPools Interfaces but in most situations,
+ * it's recommended to use the provided implementations in the JVM.
+ *
+ * It's possible that when we ask the service to run a task it won't be able to run immediately since we can limit
+ * the number of active threads. there may already be 20 active threads when we submit a task. The task will have to
+ * wait on the service's queue until of the active thread terminates.
+ *
+ * The ExecutorService Interface extends the Executor Interface which only has one method execute()
+ * it's intended to be a replacement for (new Thread(new Runnable)).start();
+ * We have to use Factory methods in the Executor's class to create the instances that implements ExecutorService
+ * We can create several different types of ExecutorServices based on the type of thread pool we want the service
+ * to use, of which, there are many.
+ *
+ * submit() - used when we want to receive a value from a thread that we're executing
+ * accepts a Callable obj that's similar to Runnable except that it can return a value
+ * the value can be return as an obj of type Future
  * */
