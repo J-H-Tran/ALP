@@ -71,4 +71,8 @@ public class DeadlockMain {
 * We want to ensure that all the threads try to obtain the locks in the same order.
 *
 * Another solution would be to use a Lock obj rather than using synchronized blocks and using tryLock()
+*
+* Another situation where a deadlock can occur
+* when we have 2 classes that contain synchronized methods and each class class a method in the other class.
+* difficult to demonstrate but can happen.
 * */
