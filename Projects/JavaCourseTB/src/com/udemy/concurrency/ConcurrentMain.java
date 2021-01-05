@@ -79,11 +79,13 @@ class MyConsumer implements Runnable {
         while (true) { // loop until reads EOF from the buffer
             bufferLock.lock();
             if (buffer.isEmpty()) { // checks to see if there's anything to read in the buffer, continues to loop until there is something to read
+                bufferLock.unlock();
                 continue;
             }
 
             if (buffer.get(0).equals(EOF)) { // checks to see if buffer is at EOF, if it is breaks out of loop
                 System.out.println(color + " Exiting.."); // checking for and not removing EOF in case other threads look for EOF to stop looping
+                bufferLock.unlock();
                 break;
             } else {
                 System.out.println(color + " Removed " + buffer.remove(0)); // print, then continue checking the buffer for data
