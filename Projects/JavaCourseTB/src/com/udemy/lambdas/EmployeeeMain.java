@@ -10,17 +10,39 @@ public class EmployeeeMain {
         Employeee tim = new Employeee("Tim Buchalka", 21);
         Employeee jack = new Employeee("Jack Hill", 40);
         Employeee snow = new Employeee("Snow White", 22);
+        Employeee red = new Employeee("Red Foreman", 35);
+        Employeee jt = new Employeee("JT", 31);
 
         List<Employeee> employeees = new ArrayList<>();
         employeees.add(john);
         employeees.add(tim);
         employeees.add(jack);
         employeees.add(snow);
+        employeees.add(red);
+        employeees.add(jt);
 
+        System.out.println("\nEmployees over 30:");
         employeees.forEach(employeee -> {
+            if (employeee.getAge() > 30) {
+                System.out.println(employeee.getName());
+            }
+        });
+        System.out.println("\nEmployees 30 and under:");
+        employeees.forEach(employeee -> {
+            if (employeee.getAge() <= 30) {
+                System.out.println(employeee.getName());
+            }
+        });
+        /*for (Employeee employee : employeees) {
+            if (employee.getAge() > 30) {
+                System.out.println(employee.getName());
+            }
+        }*/
+
+        /*employeees.forEach(employeee -> {
             System.out.println(employeee.getName());
             System.out.println(employeee.getAge());
-        });
+        });*/
     }
 }
 /*
