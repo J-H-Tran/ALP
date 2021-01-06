@@ -66,10 +66,10 @@ public class EmployeeeMain {
             System.out.println(random.nextInt(1000));
         }*/
 
-        employeees.forEach(employeee -> {
+        /*employeees.forEach(employeee -> {
             String lastName = employeee.getName().substring(employeee.getName().indexOf(' ') + 1);
             System.out.println("Last name: " + lastName);
-        });
+        });*/
 
         Function<Employeee, String> getLastName = (Employeee employeee) -> {
             return employeee.getName().substring(employeee.getName().indexOf(' ') + 1);
@@ -77,6 +77,22 @@ public class EmployeeeMain {
 
         String lastName = getLastName.apply(employeees.get(1));
         System.out.println(lastName);
+
+        Function<Employeee, String> getFirstName = (Employeee employeee) -> {
+            return employeee.getName().substring(0, employeee.getName().indexOf(' ') + 1);
+        };
+
+        for (Employeee employeee : employeees) {
+            if (random.nextBoolean()) {
+                System.out.println(getAName(getFirstName, employeee));
+            } else {
+                System.out.println(getAName(getLastName, employeee));
+            }
+        }
+    }
+
+    private static String getAName(Function<Employeee, String> getName, Employeee employeee) {
+        return getName.apply(employeee);
     }
 
     private static void printEmployeesByAge(List<Employeee> employeees,
@@ -139,4 +155,22 @@ public class EmployeeeMain {
  * we can pass code that accepts and returns a value to a method in the form of a lambda expression and then run
  * the code without having to create an interface and a class that implements the interface. We can change what a
  * method does based on the function we pass in.
+ *
+ * In a more complex app there may be cases where 30 lines of code execute but we only want 2 lines of code to run
+ * in specific cases. Rather than using interfaces with methods that are called at the appropriate points or writing
+ * different methods for every situation we can actually pass in functions for the parts that vary. That way the code
+ * will be more concise and easy to follow.
+ * Useful in callbacks... Let's say we're fetching data in a background thread and when data is ready we want to
+ * send a message out in some way on the background thread and the specifics of what we want to do can vary.
+ * So we want to be able to specify what code to run when the data has been fetched.
+ * Java provides ways to notify threads and run code when a background tasks finishes but we can also use Function.
+ *
+ * We can eliminate the need to write an interface and multiple classes that then implement that interface by
+ * creating a Function for each algorithm we may want to use. lambdas reduce the amount of code we need to write
+ * and can make code easier to follow. Rather than having a bunch of classes each with a resizeImage() we can define
+ * all the Functions in one place and use them anytime we need to use a callback. When we want to run code when a
+ * specific non-user interface even occurs. Using a Function is one option to consider.
+ *
+ * The power and convenience of using lambda expressions is the capability to execute specific code when we want
+ * to at specific times.
  *  */
