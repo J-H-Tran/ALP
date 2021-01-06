@@ -6,20 +6,36 @@ import java.util.List;
 public class EmployeeeMain {
 
     public static void main(String[] args) {
-        Employee john = new Employee("John Doe", 30);
-        Employee tim = new Employee("Tim Buchalka", 21);
-        Employee jack = new Employee("Jack Hill", 40);
-        Employee snow = new Employee("Snow White", 22);
+        Employeee john = new Employeee("John Doe", 30);
+        Employeee tim = new Employeee("Tim Buchalka", 21);
+        Employeee jack = new Employeee("Jack Hill", 40);
+        Employeee snow = new Employeee("Snow White", 22);
 
-        List<Employee> employees = new ArrayList<>();
-        employees.add(john);
-        employees.add(tim);
-        employees.add(jack);
-        employees.add(snow);
+        List<Employeee> employeees = new ArrayList<>();
+        employeees.add(john);
+        employeees.add(tim);
+        employeees.add(jack);
+        employeees.add(snow);
 
-        employees.forEach(employee -> {
-            System.out.println(employee.getName());
-            System.out.println(employee.getAge());
+        employeees.forEach(employeee -> {
+            System.out.println(employeee.getName());
+            System.out.println(employeee.getAge());
         });
     }
 }
+/*
+ * We pass forEach() a lambda expression that meets the requirements of the Consumer Interface
+ * It accepts 1 arg and performs an action that doesn't return a value. ie. the lambda below
+ * It's called a Consumer because it's 'obj in, nothing out' OINO.
+ * This is perfect for iterating a list and printing it's contents.
+ *
+ * Each iteration of forEach() calls Consumer's accept() and we pass it employeee obj as arg.
+ * accept() evaluates the lambda expression using the passed employeee obj as the arg, does the print, and
+ * nothing is returned.
+ * The employeee is 'consumed' by the forEach() and the iterator moves to the next employeee obj.
+ *
+ * - Iterator calls Consumer.accept() on each obj in arg list
+ * - accept() evaluates lambda body and methods called on obj from arg list
+ *
+ * ultimately, it's the consumer which was passed as a lambda expression that does the work.
+ *  */
