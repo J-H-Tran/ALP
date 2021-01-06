@@ -56,8 +56,14 @@ public class Main {
             }
         }, employees.get(0).getName(), employees.get(1).getName());*/
 
-        UpperConcat uc = (s1, s2) -> s1.toUpperCase() + s2.toUpperCase();
+//        UpperConcat uc = (s1, s2) -> s1.toUpperCase() +" "+ s2.toUpperCase();
+        UpperConcat uc = (s1, s2) -> {
+            String result = s1.toUpperCase() +" "+ s2.toUpperCase();
+            return result;
+        };
+
         String sillyStr = doStringOp(uc, employees.get(0).getName(), employees.get(1).getName());
+
         System.out.println(sillyStr);
     }
 
@@ -133,4 +139,9 @@ interface UpperConcat {
  * Therefore, Comparator really only has a single method that always has to be implemented by classes that implement
  * the Comparator. For that reason it's a functional interface and we can use lambdas instead of an anonymous inner
  * class.
+ *
+ * We can assign lambdas to variables and use them later. If we want to use the same lambda in more than one place
+ * we only need to define it once and we can use it wherever we need it. If lambda's body contains more than one
+ * statement we need to include the return keyword. When we put {} to declare a body for the lambda we must use
+ * the return keyword even if it only has a single statement.
  * */
