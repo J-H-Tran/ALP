@@ -112,7 +112,7 @@ public class Main {
                     System.out.println(s);
                     return s.length() == 3;
                 })
-        .count();
+                .count();
     }
 }
 /*Stream - set of obj references, ordering of these references matches ordering of the collection
