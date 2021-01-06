@@ -3,8 +3,10 @@ package com.udemy.lambdas;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class EmployeeeMain {
 
@@ -52,6 +54,16 @@ public class EmployeeeMain {
 
         System.out.println(greaterThanFifteen.and(lessThanHundred).test(50));
         System.out.println(greaterThanFifteen.and(lessThanHundred).test(500));
+
+        Random random = new Random();
+        Supplier<Integer> randSupplier = () -> random.nextInt(1000);
+        System.out.println();
+        for (int i = 0; i < 10; i++) {
+            System.out.println(randSupplier.get());
+        }
+        /*for (int i = 0; i < 10; i++) {
+            System.out.println(random.nextInt(1000));
+        }*/
     }
 
     private static void printEmployeesByAge(List<Employeee> employeees,
@@ -95,4 +107,15 @@ public class EmployeeeMain {
  * They use Generics to infer the type. There are though, Consumers and Predicates that expect a specific type.
  * double Consumer, int Consumer, long Consumer; similarly with Predicate. Where possible, it's better to use
  * the more specific type of lambda to improve readability.
+ * --------------------------------------------------------------------------------------------------------------------
+ * Supplier Interface:
+ * Doesn't accept any args but returns a value
+ * Because Supplier always returns a value we have to include the expected return type when we declare it.
+ * We can pass suppliers to methods.
+ * Examples:
+ * Sometimes you want to supply an obj of type A and other times an obj of type B, where obj B is a subclass of A.
+ * Perhaps we may have a case for where a supplier is providing an IO Stream and used as a counter.
+ * Can be used to test an app
+ * A supplier could instantiate objs and perhaps populate them with random values. These also have specifics types
+ * like Predicates do.
  *  */
