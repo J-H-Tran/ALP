@@ -3,6 +3,8 @@ package com.udemy.stream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
@@ -74,6 +76,29 @@ public class Main {
                 // flattens nested lists
                 .flatMap(department -> department.getEmployees().stream()) // returns Stream with every Employee from each Department
                 .forEach(System.out::println);
+
+        /*List<String> sortedGNumbers = bingoNumbers
+                .stream()
+                .map(String::toUpperCase)
+                .filter(s -> s.startsWith("G"))
+                .sorted()
+                .collect(Collectors.toList());*/ // we now have List that we can continue to work with if we wanted to
+
+        List<String> sortedGNumbers = bingoNumbers
+                .stream()
+                .map(String::toUpperCase)
+                .filter(s -> s.startsWith("G"))
+                .sorted() // there are 2 versions of collect(). 2nd version takes 3 args: Supplier, BiConsumerAccumulator, BiConsumerCombiner
+                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+
+        for (String s : sortedGNumbers) {
+            System.out.println(s);
+        }
+
+        Map<Integer, List<Employee>> groupedByAge = departments
+                .stream()
+                .flatMap(department -> department.getEmployees().stream())
+                .collect(Collectors.groupingBy(employee -> employee.getAge()));
     }
 }
 /*Stream - set of obj references, ordering of these references matches ordering of the collection
@@ -106,4 +131,7 @@ public class Main {
  * as a source.
  *
  * collect() - terminal op, collects elements in stream into a different type of result. To create a reduced list.
+ * There are many APIs that we can map to the Supplier, Accumulator, and Combiner. This allows us to do all kinds of
+ * things using collect. ie. if we have a lot of employees and there are groups of employees with the same age.
+ * We can create a map of Lists based on age using Collectors.groupingBy()
  * */
