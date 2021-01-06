@@ -3,6 +3,7 @@ package com.udemy.stream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Main {
 
@@ -38,6 +39,16 @@ public class Main {
                 // takes a consumer, accepts an arg and doesn't return a value. Since no value is returned chain ends here nothing to pass on to a next step
                 .forEach(System.out::println); // not the same forEach() from Iterable Interface but does the same thing
 
+        Stream<String> ioNumberStream = Stream.of("I26", "I17", "I29", "O71"); // any type of objects but not mixed types
+        Stream<String> inNumberStream = Stream.of("N40", "N36", "I26", "I17", "I29", "O71");
+        Stream<String> concatStream = Stream.concat(ioNumberStream, inNumberStream); // concat() is static so can't use in a stream but can use as a source for a stream
+//        System.out.println(concatStream.count());
+        System.out.println("=============================================================");
+        // distinct() uses equals() for comparison to check for dupes. Since our stream contains Strings it will use String.equals() for comparisons
+//        System.out.println(concatStream.distinct().count());
+        System.out.println(concatStream.distinct()
+                .peek(System.out::println) // mainly exists for debugging
+                .count());
     }
 }
 /*Stream - set of obj references, ordering of these references matches ordering of the collection
