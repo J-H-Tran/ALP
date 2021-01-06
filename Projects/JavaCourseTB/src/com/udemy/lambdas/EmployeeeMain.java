@@ -126,7 +126,7 @@ public class EmployeeeMain {
         }
     }
 }
-/*
+/*Consumer Interface
  * We pass forEach() a lambda expression that meets the requirements of the Consumer Interface
  * It accepts 1 arg and performs an action that doesn't return a value. ie. the lambda below
  * It's called a Consumer because it's 'obj in, nothing out' OINO.
