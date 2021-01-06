@@ -44,7 +44,7 @@ public class Main {
         * can be simplified even further. Compiler can infer the parameter types and we don't actually need to include
         * types in our arg list. Compiler can infer from the first arg that the objs to be compared are of type Employee
         **/
-        Collections.sort(employees, (Employee employee1, Employee employee2) ->
+        Collections.sort(employees, (employee1, employee2) ->
                 employee1.getName().compareTo(employee2.getName()));
         for (Employee employee : employees) {
             System.out.println(employee.getName());
