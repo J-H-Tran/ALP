@@ -99,6 +99,13 @@ public class Main {
                 .stream()
                 .flatMap(department -> department.getEmployees().stream())
                 .collect(Collectors.groupingBy(employee -> employee.getAge()));
+
+        departments.stream()
+                .flatMap(department -> department.getEmployees().stream())
+                // this reduce() accepts a BiFunction, returns a result
+                .reduce((e1, e2) -> e1.getAge() < e2.getAge() ? e1 : e2)
+                // we use ifPresent() to print because that version of reduce() is a terminal op
+                .ifPresent(System.out::println); // not part of the Stream, non-Stream method called on Stream chain result.
     }
 }
 /*Stream - set of obj references, ordering of these references matches ordering of the collection
@@ -134,4 +141,6 @@ public class Main {
  * There are many APIs that we can map to the Supplier, Accumulator, and Combiner. This allows us to do all kinds of
  * things using collect. ie. if we have a lot of employees and there are groups of employees with the same age.
  * We can create a map of Lists based on age using Collectors.groupingBy()
+ *
+ * reduce() - combines all the items in a Stream into a single result. 3 versions.
  * */
