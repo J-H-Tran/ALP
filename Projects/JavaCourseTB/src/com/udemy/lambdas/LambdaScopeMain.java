@@ -18,12 +18,16 @@ public class LambdaScopeMain {
         employees.add(jack);
         employees.add(snow);
 
+        employees.forEach(employee -> {
+            System.out.println(employee.getName());
+            System.out.println(employee.getAge());
+        });
         // employee doesn't actually change, it's effectively final. creates local instance for each iteration
-        for (Employee employee : employees) {
+        /*for (Employee employee : employees) {
             System.out.println(employee.getName());
             System.out.println(employee.getAge());
             new Thread(() -> System.out.println(employee.getAge())).start();
-        }
+        }*/
     }
 
     public final static String doStringOp(UpperConcat2 uc, String s1, String s2) {
