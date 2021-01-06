@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
@@ -94,8 +95,17 @@ public class EmployeeeMain {
         // which will run first, then the Function passed as arg in andThen() will operate on its result
         Function<Employeee, String> upperCase = (Employeee employeee) -> employeee.getName().toUpperCase();
         Function<String, String> firstName = name -> name.substring(0, name.indexOf(' '));
+
         Function chainedFunction = upperCase.andThen(firstName);
+
         System.out.println(chainedFunction.apply(employeees.get(0)));
+
+        BiFunction<String, Employeee, String> concatAge = (String name, Employeee employeee) -> {
+            return name.concat(" " + employeee.getAge());
+        };
+
+        String upperName = upperCase.apply(employeees.get(0));
+        System.out.println(concatAge.apply(upperName, employeees.get(0)));
     }
 
     private static String getAName(Function<Employeee, String> getName, Employeee employeee) {
@@ -184,4 +194,6 @@ public class EmployeeeMain {
  * When you chain functions together, the return value of each function is operated on by the next
  * ie. apply().andThen().andThen(), return value from apply gets operated on by andThen(), and so on.
  * There's also compose() that runs backwards
+ *
+ * BiFunction: can take 2 args and returns a value. no compose() for reverse chaining
  *  */
