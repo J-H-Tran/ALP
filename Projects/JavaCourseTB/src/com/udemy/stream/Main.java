@@ -15,7 +15,7 @@ public class Main {
                 "I26", "I17", "I29",
                 "O71");
 
-        List<String> gNums = new ArrayList<>();
+//        List<String> gNums = new ArrayList<>();
 
         /*bingoNumbers.forEach(number -> {
             if (number.toUpperCase().startsWith("G")) {
@@ -46,9 +46,34 @@ public class Main {
         System.out.println("=============================================================");
         // distinct() uses equals() for comparison to check for dupes. Since our stream contains Strings it will use String.equals() for comparisons
 //        System.out.println(concatStream.distinct().count());
-        System.out.println(concatStream.distinct()
+        System.out.println(concatStream
+                .distinct()
                 .peek(System.out::println) // mainly exists for debugging
                 .count());
+
+        Employee john = new Employee("John Doe", 30);
+        Employee tim = new Employee("Tim Buchalka", 21);
+        Employee jack = new Employee("Jack Hill", 40);
+        Employee snow = new Employee("Snow White", 22);
+
+        Department hr = new Department("Human Resources");
+        Department ac = new Department("Accounting");
+
+        hr.addEmployee(tim);
+        hr.addEmployee(jack);
+        hr.addEmployee(snow);
+        ac.addEmployee(john);
+
+        List<Department> departments = new ArrayList<>();
+        departments.add(hr);
+        departments.add(ac);
+
+        departments.stream()
+                // flatMap() wants a function that returns a Stream. Each department in the source stream becomes the argument to the function
+                // for every department we call getEmployees(), which returns a list, then stream() returns a Stream of employees
+                // flattens nested lists
+                .flatMap(department -> department.getEmployees().stream()) // returns Stream with every Employee from each Department
+                .forEach(System.out::println);
     }
 }
 /*Stream - set of obj references, ordering of these references matches ordering of the collection
@@ -75,4 +100,10 @@ public class Main {
  * intermediate operations return a Stream
  *
  * Stream Pipeline: Source, zero or more intermediate ops, terminal op
+ *
+ * flatMap() - map a single obj to more than one obj
+ * The one to use when you want to perform operations on a List that isn't the source. So an obj containing the List
+ * as a source.
+ *
+ * collect() - terminal op, collects elements in stream into a different type of result. To create a reduced list.
  * */
