@@ -89,6 +89,13 @@ public class EmployeeeMain {
                 System.out.println(getAName(getLastName, employeee));
             }
         }
+
+        // chaining functions requires 2 steps: create a 'composed' function (the function that calls andThen())
+        // which will run first, then the Function passed as arg in andThen() will operate on its result
+        Function<Employeee, String> upperCase = (Employeee employeee) -> employeee.getName().toUpperCase();
+        Function<String, String> firstName = name -> name.substring(0, name.indexOf(' '));
+        Function chainedFunction = upperCase.andThen(firstName);
+        System.out.println(chainedFunction.apply(employeees.get(0)));
     }
 
     private static String getAName(Function<Employeee, String> getName, Employeee employeee) {
@@ -173,4 +180,8 @@ public class EmployeeeMain {
  *
  * The power and convenience of using lambda expressions is the capability to execute specific code when we want
  * to at specific times.
+ * --------------------------------------------------------------------------------------------------------------------
+ * When you chain functions together, the return value of each function is operated on by the next
+ * ie. apply().andThen().andThen(), return value from apply gets operated on by andThen(), and so on.
+ * There's also compose() that runs backwards
  *  */
