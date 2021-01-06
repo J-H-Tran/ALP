@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -16,7 +17,7 @@ public class EmployeeeMain {
         Employeee jack = new Employeee("Jack Hill", 40);
         Employeee snow = new Employeee("Snow White", 22);
         Employeee red = new Employeee("Red Foreman", 35);
-        Employeee jt = new Employeee("JT", 31);
+        Employeee jt = new Employeee("J. T.", 31);
 
         List<Employeee> employeees = new ArrayList<>();
         employeees.add(john);
@@ -64,6 +65,18 @@ public class EmployeeeMain {
         /*for (int i = 0; i < 10; i++) {
             System.out.println(random.nextInt(1000));
         }*/
+
+        employeees.forEach(employeee -> {
+            String lastName = employeee.getName().substring(employeee.getName().indexOf(' ') + 1);
+            System.out.println("Last name: " + lastName);
+        });
+
+        Function<Employeee, String> getLastName = (Employeee employeee) -> {
+            return employeee.getName().substring(employeee.getName().indexOf(' ') + 1);
+        };
+
+        String lastName = getLastName.apply(employeees.get(1));
+        System.out.println(lastName);
     }
 
     private static void printEmployeesByAge(List<Employeee> employeees,
@@ -118,4 +131,12 @@ public class EmployeeeMain {
  * Can be used to test an app
  * A supplier could instantiate objs and perhaps populate them with random values. These also have specifics types
  * like Predicates do.
+ * --------------------------------------------------------------------------------------------------------------------
+ * Function Interface:
+ * Previously, Consumers don't return a value, Predicate only returns a boolean, Supplier doesn't take any args!
+ * But, Function takes one arg and returns a value. apply()
+ * We could've created a regular method called getLastName() or use an anon inner class but, by using Function,
+ * we can pass code that accepts and returns a value to a method in the form of a lambda expression and then run
+ * the code without having to create an interface and a class that implements the interface. We can change what a
+ * method does based on the function we pass in.
  *  */
