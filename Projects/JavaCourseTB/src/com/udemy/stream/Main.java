@@ -27,11 +27,16 @@ public class Main {
         gNums.forEach((String s) -> System.out.println(s));*/
 
         bingoNumbers
-                .stream() // returns, a stream that contains all the items in the list in the same order they originally occurred
-                .map(String::toUpperCase) // returns String from toUpperCase(). accepts a Function which takes single arg, passed in String.toUpperCase() has no args but has source String.
+                // returns, a stream that contains all the items in the list in the same order they originally occurred. references
+                .stream()
+                // returns String from toUpperCase(). accepts a Function which takes single arg, passed in String.toUpperCase() has no args but has source String.
+                .map(String::toUpperCase)
+                // returns only items that returned true from Predicate. Takes a Predicate and not a Function, passed in lambda takes a single arg and returns a boolean
                 .filter(s -> s.startsWith("G"))
+                // sorts based on natural ordering, can take a Comparator if needed
                 .sorted()
-                .forEach(System.out::println);
+                // takes a consumer, accepts an arg and doesn't return a value. Since no value is returned chain ends here nothing to pass on to a next step
+                .forEach(System.out::println); // not the same forEach() from Iterable Interface but does the same thing
 
     }
 }
@@ -51,4 +56,12 @@ public class Main {
  * If all we are doing is executing a method in our lambda expression we can use a method reference in place of it.
  * With method references 'ClassName::methodName()' that takes a parameter the compiler has to be able to infer what the arg is.
  * compiler has no way of knowing we want "G" passed into startsWith() so we can't use a method reference there.
+ *
+ * map() - It's mapping each item in the input stream to the results returned by the function passed in to it's
+ * argument. Each resulting toUpperCase value returned from the method is mapped to each item in the stream from stream().
+ *
+ * Stream.forEach() - terminal operation, returns void or non-Stream forces and end in the chain
+ * intermediate operations return a Stream
+ *
+ * Stream Pipeline: Source, zero or more intermediate ops, terminal op
  * */
