@@ -1,7 +1,6 @@
 package com.udemy.lambdas;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class LambdaScopeMain {
@@ -121,4 +120,9 @@ class AnotherClass {
  * can't be changed from outside.
  *
  * Iterable interface .forEach() accepts a lambda expression and evaluates it for each item in the iterable collection.
+ *
+ * How have lambdas enhanced Java?
+ * some developers only see it as syntactic sugar as a more convenient and concise way to write anon classes.
+ * some say it's first steps into functional programming. A paradigm that focuses on computing and returning results.
+ * You never really have to use lambda expressions, some can be hard to read/understand
  * */
