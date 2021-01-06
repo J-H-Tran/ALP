@@ -106,6 +106,13 @@ public class Main {
                 .reduce((e1, e2) -> e1.getAge() < e2.getAge() ? e1 : e2)
                 // we use ifPresent() to print because that version of reduce() is a terminal op
                 .ifPresent(System.out::println); // not part of the Stream, non-Stream method called on Stream chain result.
+
+        Stream.of("ABC", "AC", "BAA", "CCCC", "EEFF")
+                .filter(s -> {
+                    System.out.println(s);
+                    return s.length() == 3;
+                })
+        .count();
     }
 }
 /*Stream - set of obj references, ordering of these references matches ordering of the collection
@@ -143,4 +150,11 @@ public class Main {
  * We can create a map of Lists based on age using Collectors.groupingBy()
  *
  * reduce() - combines all the items in a Stream into a single result. 3 versions.
+ *
+ * Notes:
+ * - Streams cannot be reused. If we've called a terminal op on a stream we'll receive the IllegalStateException if we
+ *  try to operate on that Stream again
+ * - Are lazily evaluated, intermediate ops are not performed until there's a terminal op
+ * - We can use more type specific Stream like Int, Long, Double and they have additional methods like sum(), min(), max()
+ * - Parallel Streams when we want to increase performance by executing streams in parallel. Collection.parallelStream()
  * */
