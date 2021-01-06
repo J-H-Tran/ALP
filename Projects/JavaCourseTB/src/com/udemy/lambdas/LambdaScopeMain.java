@@ -18,10 +18,12 @@ public class LambdaScopeMain {
         employees.add(jack);
         employees.add(snow);
 
-        AnotherClass anotherClass = new AnotherClass();
-        String s = anotherClass.doSomething();
-        System.out.println(s);
-        anotherClass.printValue();
+        // employee doesn't actually change, it's effectively final. creates local instance for each iteration
+        for (Employee employee : employees) {
+            System.out.println(employee.getName());
+            System.out.println(employee.getAge());
+            new Thread(() -> System.out.println(employee.getAge())).start();
+        }
     }
 
     public final static String doStringOp(UpperConcat2 uc, String s1, String s2) {
@@ -113,4 +115,6 @@ class AnotherClass {
  * Because lambdas may not be immediately evaluated, any variables that we use within them from outside the lambda
  * must be final. We can safely change the variables declared within the lambda because they are within scope and thus,
  * can't be changed from outside.
+ *
+ * Iterable interface .forEach() accepts a lambda expression and evaluates it for each item in the iterable collection.
  * */
