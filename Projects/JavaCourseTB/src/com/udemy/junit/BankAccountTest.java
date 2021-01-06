@@ -18,6 +18,11 @@ public class BankAccountTest {
     public void getBalance() {
         fail("This test hasn't been implemented");
     }
+
+    /*@org.junit.Test
+    public void dummyTest() {
+        assertEquals(20,21); // 1st arg is expected result, 2nd is value we're testing. Pass if they're equal
+    }*/
 }
 /*
 * create a separate run configuration for all out tests because
@@ -30,4 +35,11 @@ public class BankAccountTest {
 * We test the output of a method against an assertion that we've made
 * about the expected output. and the assertion will fail if the
 * test condition isn't met.
+* ------------------------------------------------------------------------
+* Test methods requirements:
+* - must be annotated with @org.junit.Test
+* - public access modifier
+* - void return type
+*
+* Assertion
 * */
