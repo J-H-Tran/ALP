@@ -2,7 +2,6 @@ package com.udemy.lambdas;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class Main {
@@ -40,15 +39,26 @@ public class Main {
         });*/
 
         /* lambda is being passed as a 2nd arg instead of an anonymous Comparator
-        * one nice thing about lambdas is that it's easy to see which code will be executed
-        * can be simplified even further. Compiler can infer the parameter types and we don't actually need to include
-        * types in our arg list. Compiler can infer from the first arg that the objs to be compared are of type Employee
-        **/
+         * one nice thing about lambdas is that it's easy to see which code will be executed
+         * can be simplified even further. Compiler can infer the parameter types and we don't actually need to include
+         * types in our arg list. Compiler can infer from the first arg that the objs to be compared are of type Employee
+         **/
         Collections.sort(employees, (employee1, employee2) ->
                 employee1.getName().compareTo(employee2.getName()));
         for (Employee employee : employees) {
             System.out.println(employee.getName());
         }
+
+        String sillyStr = doStringOp(new UpperConcat() {
+            @Override
+            public String upperAndConcat(String s1, String s2) {
+                return s1.toUpperCase() + s2.toUpperCase();
+            }
+        }, employees.get(0).getName(), employees.get(1).getName());
+    }
+
+    public final static String doStringOp(UpperConcat uc,  String s1, String s2) {
+        return uc.upperAndConcat(s1, s2);
     }
 }
 
@@ -76,6 +86,10 @@ class Employee {
     public void setAge(int age) {
         this.age = age;
     }
+}
+
+interface UpperConcat {
+    public String upperAndConcat(String s1, String s2);
 }
 // class CodeToRun implements Runnable {}
 /* Lambdas
