@@ -23,7 +23,7 @@ public class LambdaScopeMain {
         System.out.println(s);
     }
 
-    public final static String doStringOp(UpperConcat uc, String s1, String s2) {
+    public final static String doStringOp(UpperConcat2 uc, String s1, String s2) {
         return uc.upperAndConcat(s1, s2);
     }
 }
@@ -60,6 +60,16 @@ interface UpperConcat2 {
 
 class AnotherClass {
     public String doSomething() {
+        UpperConcat2 uc = (s1, s2) -> {
+            System.out.println("The lambda expression's class is: " + getClass().getSimpleName());
+            String result = s1.toUpperCase() + " " + s2.toUpperCase();
+            return result;
+        };
+
+        System.out.println("The AnotherClass's name is: " + getClass().getSimpleName());
+        return LambdaScopeMain.doStringOp(uc, "String 1", "String 2");
+    }
+    /*public String doSomething() {
         System.out.println("The AnotherClass's name is: " + getClass().getSimpleName());
         return Main.doStringOp(new UpperConcat() {
             @Override
@@ -68,5 +78,9 @@ class AnotherClass {
                 return s1.toUpperCase() + " " + s2.toUpperCase();
             }
         }, "String 1", "String 2");
-    }
+    }*/
 }
+/*
+ * A lambda expression ins't a class. When the code runs, an anonymous instance isn't created.
+ * Instead, the lambda is treated like a nested block of code and it has the same scope as a nested block.
+ * */
