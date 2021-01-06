@@ -2,11 +2,11 @@ package com.udemy.lambdas;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
+import java.util.function.IntUnaryOperator;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -106,6 +106,9 @@ public class EmployeeeMain {
 
         String upperName = upperCase.apply(employeees.get(0));
         System.out.println(concatAge.apply(upperName, employeees.get(0)));
+
+        IntUnaryOperator incByFive = i -> i + 5;
+        System.out.println(incByFive.applyAsInt(10));
     }
 
     private static String getAName(Function<Employeee, String> getName, Employeee employeee) {
@@ -196,4 +199,5 @@ public class EmployeeeMain {
  * There's also compose() that runs backwards
  *
  * BiFunction: can take 2 args and returns a value. no compose() for reverse chaining
+ * Unary: takes 1 arg and returns same type as arg
  *  */
