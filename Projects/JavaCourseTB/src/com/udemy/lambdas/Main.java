@@ -9,17 +9,17 @@ public class Main {
 
     public static void main(String[] args) {
 //        new Thread(new CodeToRun()).start();
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                System.out.println("Printing from Runnable in main");
-//            }
-//        }).start();
-        new Thread(() -> {
+        /*new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Printing from Runnable in main");
+            }
+        }).start();*/
+        /*new Thread(() -> {
             System.out.println("Printing1 from Runnable lambda");
             System.out.println("Printing2 from Runnable lambda");
             System.out.println("Printing3 from Runnable lambda");
-        }).start();
+        }).start();*/
 
         Employee john = new Employee("John Doe", 30);
         Employee tim = new Employee("Tim Buchalka", 21);
@@ -32,13 +32,20 @@ public class Main {
         employees.add(jack);
         employees.add(snow);
 
-        Collections.sort(employees, new Comparator<Employee>() {
+        /*Collections.sort(employees, new Comparator<Employee>() {
             @Override
             public int compare(Employee employee1, Employee employee2) {
                 return employee1.getName().compareTo(employee2.getName());
             }
-        });
+        });*/
 
+        /* lambda is being passed as a 2nd arg instead of an anonymous Comparator
+        * one nice thing about lambdas is that it's easy to see which code will be executed
+        * can be simplified even further. Compiler can infer the parameter types and we don't actually need to include
+        * types in our arg list. Compiler can infer from the first arg that the objs to be compared are of type Employee
+        **/
+        Collections.sort(employees, (Employee employee1, Employee employee2) ->
+                employee1.getName().compareTo(employee2.getName()));
         for (Employee employee : employees) {
             System.out.println(employee.getName());
         }
