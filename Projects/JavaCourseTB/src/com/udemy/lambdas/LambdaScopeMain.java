@@ -21,6 +21,7 @@ public class LambdaScopeMain {
         AnotherClass anotherClass = new AnotherClass();
         String s = anotherClass.doSomething();
         System.out.println(s);
+        anotherClass.printValue();
     }
 
     public final static String doStringOp(UpperConcat2 uc, String s1, String s2) {
@@ -60,8 +61,12 @@ interface UpperConcat2 {
 
 class AnotherClass {
     public String doSomething() {
+        int i = 0;
+//        i++;
+
         UpperConcat2 uc = (s1, s2) -> {
             System.out.println("The lambda expression's class is: " + getClass().getSimpleName());
+            System.out.println("i in the lambda expression: " + i); // local variables must be effectively final for anon class & lambdas to use
             String result = s1.toUpperCase() + " " + s2.toUpperCase();
             return result;
         };
@@ -79,6 +84,18 @@ class AnotherClass {
             }
         }, "String 1", "String 2");
     }*/
+    public void printValue() {
+        int number = 25;
+        Runnable runnable = () -> {
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("The value is: " + number);
+        };
+        new Thread(runnable).start();
+    }
 }
 /*
  * A lambda expression ins't a class. When the code runs, an anonymous instance isn't created.
@@ -91,4 +108,9 @@ class AnotherClass {
  * the java runtime to update the value within the anon class instance every time it changed. Values would get out of
  * sync, so the values of local variables declared outside the scope of the anon class are not allowed to be changed
  * and have to be declared final.
+ *
+ * Lambda expressions are treated like nested blocks.
+ * Because lambdas may not be immediately evaluated, any variables that we use within them from outside the lambda
+ * must be final. We can safely change the variables declared within the lambda because they are within scope and thus,
+ * can't be changed from outside.
  * */
