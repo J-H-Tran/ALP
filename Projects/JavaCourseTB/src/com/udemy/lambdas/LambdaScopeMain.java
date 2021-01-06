@@ -83,4 +83,12 @@ class AnotherClass {
 /*
  * A lambda expression ins't a class. When the code runs, an anonymous instance isn't created.
  * Instead, the lambda is treated like a nested block of code and it has the same scope as a nested block.
+ *
+ * Q. Why do local variables have to be declared as final when we use them within an anon class?
+ * Because the local variable doesn't belong to the anon class instance. Behind the scenes, the variable is replaced
+ * by whatever the value of i is when the instance is constructed so it's possible we may not use the instance
+ * of the anon class for a while. We may even pass it to a method in another class and there'd be no way for
+ * the java runtime to update the value within the anon class instance every time it changed. Values would get out of
+ * sync, so the values of local variables declared outside the scope of the anon class are not allowed to be changed
+ * and have to be declared final.
  * */
