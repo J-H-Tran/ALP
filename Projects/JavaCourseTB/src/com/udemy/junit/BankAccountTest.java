@@ -6,6 +6,11 @@ public class BankAccountTest {
 
     private BankAccount account;
 
+    @org.junit.BeforeClass
+    public static void beforeClass() {
+        System.out.println("This executes before any test methods run.");
+    }
+
     @org.junit.Before // method annotated with Before is run before every single test method
     public void setup() {
         account = new BankAccount("Jon", "Tran", 1000.00, BankAccount.CHECKING);
@@ -39,6 +44,11 @@ public class BankAccountTest {
     @org.junit.Test
     public void isChecking_true() {
         assertTrue("Account is NOT a CHECKING account", account.isChecking()); // message when fails
+    }
+
+    @org.junit.AfterClass
+    public static void afterClass() {
+        System.out.println("This executes after every test methods run");
     }
 
     /*@org.junit.Test
@@ -85,4 +95,13 @@ public class BankAccountTest {
  * assertSame() assertNotSame() - use when checking whether 2 instances are the exact same instance. compares obj refs
  * assertThat() - compares actual value agains a matcher (JUnit 4.4+ Matcher class)
  * ^more powerful than the other assert methods since we can compare the actual value against a range of values
+ *
+ * What if we only want to initialize setup once instead of every time a test method runs?
+ * @org.junit.BeforeClass can do that. We'll need @org.junit.AfterClass to run any clean up code needed
+ * Before - runs before any test methods
+ * After - runs after all test methods executed
+ * Must be declared public static void name() {}
+ *
+ * With the print statements in the BeforeClass and AfterClass, possible to not see BeforeClass statement printed
+ * first since all the statements are spooled to an IO thread. May appear out of order when printing.
  * */
