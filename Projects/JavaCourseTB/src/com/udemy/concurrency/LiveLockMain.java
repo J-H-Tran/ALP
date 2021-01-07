@@ -45,7 +45,7 @@ public class LiveLockMain {
  * 3. T2 runs again, attempts to read from buffer, throws Exception/crashes
  *
  * Because the threads can interfere with each other when checking and setting the condition, T1 tried to do something
- * based on obsolete information, when it checked the stats it was OK.
+ * based on obsolete information, when it checked the status it was OK.
  * By the time it acted on the condition it checked previously, the status had been updated by T2. T1 is unaware
  * and an error occurred.
  *

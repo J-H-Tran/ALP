@@ -1,10 +1,15 @@
 package com.udemy.concurrency;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class Deadlock2Main {
 
     public static void main(String[] args) {
         PolitePerson jane = new PolitePerson("Jane");
         PolitePerson felix = new PolitePerson("Felix");
+
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
 
         // both may sayHello() but possible that neither of them will sayHelloBack()
         new Thread(new Runnable() {
