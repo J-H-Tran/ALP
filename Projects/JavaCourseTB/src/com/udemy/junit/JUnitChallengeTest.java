@@ -7,11 +7,12 @@ import static org.junit.Assert.assertNull;
 
 public class JUnitChallengeTest {
 
-    private static JUnitChallenge utilities;
-
-    @org.junit.BeforeClass
-    public static void setup() {
+    private JUnitChallenge utilities;
+    // BeforeClass happens just once
+    @org.junit.Before // so that every Test methods has a 'fresh' instance of the utilities class we use Before, which executes once for every Test method
+    public void setup() {
         utilities = new JUnitChallenge();
+        System.out.println("Running a test...");
     }
 
     @org.junit.Test
@@ -42,6 +43,11 @@ public class JUnitChallengeTest {
     public void converter() {
         int valueToTest = utilities.converter(10, 5);
         assertEquals(300, valueToTest);
+    }
+
+    @org.junit.Test(expected = ArithmeticException.class)
+    public void converter2() throws Exception {
+        utilities.converter(10, 0);
     }
 
     @org.junit.Test

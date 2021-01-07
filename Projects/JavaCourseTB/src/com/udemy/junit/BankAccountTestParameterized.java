@@ -30,7 +30,7 @@ public class BankAccountTestParameterized {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> testConditions() {
+    public static Collection<Object> testConditions() {
         return Arrays.asList(new Object[][]{
                 {100.00, true, 1100.00},
                 {200.00, true, 1200.00},
