@@ -1,9 +1,28 @@
 package com.udemy.database;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class Main {
 
     public static void main(String[] args) {
 
+        /*try (Connection conn = DriverManager.getConnection("jdbc:sqlite:D:\\JavaMasterclassBuchalka\\Projects\\JavaCourseTB\\testjava.db");
+             Statement statement = conn.createStatement()) {*/
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:D:\\JavaMasterclassBuchalka\\Projects\\JavaCourseTB\\testjava.db");
+            Statement statement = conn.createStatement();
+
+            statement.execute("CREATE TABLE contacts (name TEXT, phone INTEGER, email TEXT)");
+            statement.execute("CREATE TABLE IF NOT EXISTS contacts (name TEXT, phone INTEGER, email TEXT)");
+
+            statement.close();
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println("Something went wrong! " + e.getMessage());
+        }
     }
 }
 /*JDBC API (Java Database Connectivity) - consists of 2 packages: java.sql (Core JDBC) & javax.sql (Optional JDBC)
@@ -29,4 +48,17 @@ public class Main {
  *
  * All popular DBs provide JDBC drivers. JDK ships with a DB called Derby, which can be used for
  * desktop applications, or when prototyping. Derby JDBC driver included in JDK
+ *
+ * Connection String:
+ * All JDBC Drivers need a connection string that's used to connect to the DB, starts with, 'jdbc:'
+ * can also specify DB attributes with the connection string. Check JDBC Driver documentation to
+ * see the connection string requirements.
+ *
+ * 2 ways of establishing connection using JDBC 4.0 - Connection String & Data Source objects
+ * the latter is sometimes preferred because it allows advanced features like connection pooling
+ * and distributed transactions. It's also more portable because of the way connections are established.
+ * Only really needed when working with large enterprise applications like JEE.
+ *
+ * Whenever we want to use SQL with JDBC we use what's called Statement Objects
+ * To create a Table we call connection.create() statement method
  * */
