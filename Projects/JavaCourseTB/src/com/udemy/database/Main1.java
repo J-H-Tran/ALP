@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class Main {
+public class Main1 {
     enum Database {
         DB_NAME("testjava.db"),
         CONNECTION_STRING("jdbc:sqlite:D:\\JavaMasterclassBuchalka\\Projects\\JavaCourseTB\\testjava.db"),
