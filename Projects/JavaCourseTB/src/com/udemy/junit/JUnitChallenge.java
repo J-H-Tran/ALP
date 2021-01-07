@@ -36,7 +36,7 @@ public class JUnitChallenge {
         char[] string = source.toCharArray();
 
         for (int i = 0; i < string.length - 1; i++) {
-            if (string[i] != string[i++]) {
+            if (string[i] != string[i + 1]) {
                 sb.append(string[i]);
             }
         }
