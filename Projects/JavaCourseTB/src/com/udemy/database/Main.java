@@ -42,33 +42,13 @@ public class Main {
                     + Database.COLUMN_EMAIL.value + " TEXT"
                     + ")");
 
-            statement.execute("INSERT INTO "
-                    + Database.TABLE_CONTACTS.value + " ("
-                    + Database.COLUMN_NAME.value + ", "
-                    + Database.COLUMN_PHONE.value + ", "
-                    + Database.COLUMN_EMAIL.value + ") "
-                    + "VALUES('Tim', 123456789, 'jon@email.com')");
+            insertContact(statement, "Tim", 123456789, "jon@email.com");
 
-            statement.execute("INSERT INTO "
-                    + Database.TABLE_CONTACTS.value + " ("
-                    + Database.COLUMN_NAME.value + ", "
-                    + Database.COLUMN_PHONE.value + ", "
-                    + Database.COLUMN_EMAIL.value + ") "
-                    + "VALUES('Joe', 123456987, 'ken@email.com')");
+            insertContact(statement,"Joe", 123456987, "ken@email.com");
 
-            statement.execute("INSERT INTO "
-                    + Database.TABLE_CONTACTS.value + " ("
-                    + Database.COLUMN_NAME.value + ", "
-                    + Database.COLUMN_PHONE.value + ", "
-                    + Database.COLUMN_EMAIL.value + ") "
-                    + "VALUES('Jane', 123654789, 'tom@email.com')");
+            insertContact(statement,"Jane", 123654789, "tom@email.com");
 
-            statement.execute("INSERT INTO "
-                    + Database.TABLE_CONTACTS.value + " ("
-                    + Database.COLUMN_NAME.value + ", "
-                    + Database.COLUMN_PHONE.value + ", "
-                    + Database.COLUMN_EMAIL.value + ") "
-                    + "VALUES('Fido', 123456, 'hal@email.com')");
+            insertContact(statement,"Fido", 123456, "hal@email.com");
 
             statement.execute("UPDATE "
                     + Database.TABLE_CONTACTS.value + " SET "
@@ -95,6 +75,15 @@ public class Main {
             System.out.println("Something went wrong! " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private static void insertContact(Statement statement, String name, int phone, String email) throws SQLException {
+        statement.execute("INSERT INTO "
+                + Database.TABLE_CONTACTS.value + " ("
+                + Database.COLUMN_NAME.value + ", "
+                + Database.COLUMN_PHONE.value + ", "
+                + Database.COLUMN_EMAIL.value + ") "
+                + "VALUES('" + name + "', " + phone + ", '" + email + "')");
     }
 }
 /*JDBC API (Java Database Connectivity) - consists of 2 packages: java.sql (Core JDBC) & javax.sql (Optional JDBC)
