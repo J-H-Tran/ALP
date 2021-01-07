@@ -1,6 +1,7 @@
 package com.udemy.junit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class BankAccountTest {
 
@@ -26,8 +27,15 @@ public class BankAccountTest {
     }
 
     @org.junit.Test
-    public void withdraw() {
-        fail("This test hasn't been implemented");
+    public void withdraw_branch() {
+        double balance = account.withdraw(600.00, true);
+        assertEquals(400.00, balance, 0);
+    }
+
+    @org.junit.Test(expected = IllegalArgumentException.class)
+    public void withdraw_notBranch() {
+        double balance = account.withdraw(600.00, false);
+        assertEquals(400.00, balance, 0);
     }
 
     @org.junit.Test
