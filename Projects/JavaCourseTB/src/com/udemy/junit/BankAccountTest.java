@@ -2,6 +2,7 @@ package com.udemy.junit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class BankAccountTest {
 
@@ -34,8 +35,8 @@ public class BankAccountTest {
 
     @org.junit.Test(expected = IllegalArgumentException.class)
     public void withdraw_notBranch() {
-        double balance = account.withdraw(600.00, false);
-        assertEquals(400.00, balance, 0);
+        account.withdraw(600.00, false);
+        fail("Should've thrown an IllegalArgumentException");
     }
 
     @org.junit.Test
@@ -118,4 +119,9 @@ public class BankAccountTest {
  *
  * With the print statements in the BeforeClass and AfterClass, possible to not see BeforeClass statement printed
  * first since all the statements are spooled to an IO thread. May appear out of order when printing.
+ *
+ * Parameterized Tests
+ * So we want every test to start 'fresh' and that can result in a lot of repetitive code.
+ * ie. trying to deposit 5 diff amounts and verifying the resulting balance -> 5 separate Test methods
+ * Or we can just write a parameterized test. Requires a class annotation
  * */
