@@ -14,9 +14,19 @@ public class Main {
         try {
             Connection conn = DriverManager.getConnection("jdbc:sqlite:D:\\JavaMasterclassBuchalka\\Projects\\JavaCourseTB\\testjava.db");
             Statement statement = conn.createStatement();
+//            conn.setAutoCommit(false); default:true
 
-            statement.execute("CREATE TABLE contacts (name TEXT, phone INTEGER, email TEXT)");
             statement.execute("CREATE TABLE IF NOT EXISTS contacts (name TEXT, phone INTEGER, email TEXT)");
+            /*statement.execute("INSERT INTO contacts (name, phone, email) " +
+                    "VALUES('Jon', 123456789, 'jon@email.com')");
+            statement.execute("INSERT INTO contacts (name, phone, email) " +
+                    "VALUES('Ken', 123456987, 'ken@email.com')");
+            statement.execute("INSERT INTO contacts (name, phone, email) " +
+                    "VALUES('Tom', 123654789, 'tom@email.com')");
+            statement.execute("INSERT INTO contacts (name, phone, email) " +
+                    "VALUES('Hal', 123456, 'hal@email.com')");*/
+            statement.execute("UPDATE contacts SET phone=987654 where name='Jon'");
+            statement.execute("delete from contacts where name='Tom'");
 
             statement.close();
             conn.close();
@@ -61,4 +71,10 @@ public class Main {
  *
  * Whenever we want to use SQL with JDBC we use what's called Statement Objects
  * To create a Table we call connection.create() statement method
+ *
+ * The JDBC Connection class commits any changes we make to the DB for us immediately after
+ * a statement is executed. Though, depending on the DB you're working with what what type of
+ * connection you sometimes have to explicitly commit any changes you make to the DB for those
+ * changes to persist. If you don't commit them before closing the connection then any changes
+ * we make will be lost, rolled back.
  * */
