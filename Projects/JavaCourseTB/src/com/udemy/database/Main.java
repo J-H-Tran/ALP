@@ -2,6 +2,7 @@ package com.udemy.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -25,9 +26,18 @@ public class Main {
                     "VALUES('Tom', 123654789, 'tom@email.com')");
             statement.execute("INSERT INTO contacts (name, phone, email) " +
                     "VALUES('Hal', 123456, 'hal@email.com')");*/
-            statement.execute("UPDATE contacts SET phone=987654 where name='Jon'");
-            statement.execute("delete from contacts where name='Tom'");
+//            statement.execute("UPDATE contacts SET phone=987654 where name='Jon'");
+//            statement.execute("delete from contacts where name='Tom'");
 
+            statement.execute("select * from contacts");
+            ResultSet results = statement.getResultSet();
+            while (results.next()) {
+                System.out.println(results.getString("name") + " " +
+                        results.getInt("phone") + " " +
+                        results.getString("email"));
+            }
+
+            results.close();
             statement.close();
             conn.close();
         } catch (SQLException e) {
@@ -77,4 +87,21 @@ public class Main {
  * connection you sometimes have to explicitly commit any changes you make to the DB for those
  * changes to persist. If you don't commit them before closing the connection then any changes
  * we make will be lost, rolled back.
+ *
+ * Statement.execute() returns boolean, true if returned an instance of ResultSet class. false if returns an
+ * update count or no results
+ *
+ * When we query the DB the method returns the records that match the query as a ResultSet instance.
+ * We can actually get the results by calling Statement.getResultSet()
+ * Every ResultSet has a cursor, not the same as a DB cursor, we could have several ResultSet obj and ea one will
+ * have it's own cursor.
+ *
+ * Important, if you reuse a statement obj to do a query then any ResultSet associated with that Statement obj
+ * is closed and a new one is created for the new query.
+ * A Statement obj can only ever have one ResultSet associated with it.
+ *
+ * When the ResultSet is created our cursor is positioned before the first record and so the first time we call
+ * ResultSet.next() the cursor will be moved to the first record, and so on. When there are no more records next()
+ * returns false.
+ * When we call ResultSet.getResultSet() values returned are from the record at the ResultSet's current position.
  * */
