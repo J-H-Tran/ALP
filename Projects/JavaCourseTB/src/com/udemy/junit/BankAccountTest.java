@@ -5,13 +5,14 @@ import static org.junit.Assert.*;
 public class BankAccountTest {
 
     private BankAccount account;
+    private static int cnt;
 
     @org.junit.BeforeClass
     public static void beforeClass() {
-        System.out.println("This executes before any test methods run.");
+        System.out.println("This executes before any test methods run. Count = " + cnt++);
     }
 
-    @org.junit.Before // method annotated with Before is run before every single test method
+    @org.junit.Before // method annotated with Before is run before every single Test method
     public void setup() {
         account = new BankAccount("Jon", "Tran", 1000.00, BankAccount.CHECKING);
         System.out.println("Running a test");
@@ -48,7 +49,12 @@ public class BankAccountTest {
 
     @org.junit.AfterClass
     public static void afterClass() {
-        System.out.println("This executes after every test methods run");
+        System.out.println("This executes after every test method runs Count = " + cnt++);
+    }
+
+    @org.junit.After // runs after every single Test method
+    public void tearDown() {
+        System.out.println("Count = " + cnt++);
     }
 
     /*@org.junit.Test
