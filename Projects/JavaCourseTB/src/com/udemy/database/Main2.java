@@ -48,6 +48,8 @@ public class Main2 {
         int count = datasaource.getCount(Datasource.TABLE_SONGS);
         System.out.println("Number of songs is: " + count);
 
+        datasaource.createViewForSongArtist();
+
         datasaource.close();
     }
 }

@@ -63,6 +63,19 @@ public class Datasource { // often used as a Singleton
     public static final String QUERY_ARTIST_FOR_SONG_SORT =
             " order by " + TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + ", " + TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME + " collate nocase ";
 
+    public static final String TABLE_ARTIST_SONG_VIEW = "artist_list";
+    public static final String CREATE_ARTIST_FOR_SONG_VIEW = "create view if not exists " + TABLE_ARTIST_SONG_VIEW
+            + " as select " + TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + ", " + TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME
+            + " as " + COLUMN_SONG_ALBUM + ", " + TABLE_SONGS + "." + COLUMN_SONG_TRACK + ", " + TABLE_SONGS + "." + COLUMN_SONG_TITLE
+            + " from " + TABLE_SONGS
+            + " inner JOIN " + TABLE_ALBUMS
+            + " on " + TABLE_SONGS + "." + COLUMN_SONG_ALBUM + " = " + TABLE_ALBUMS + "." + COLUMN_ALBUM_ID
+            + " inner join " + TABLE_ARTISTS
+            + " on " + TABLE_ALBUMS + "." + COLUMN_ALBUM_ARTIST + " = " + TABLE_ARTISTS + "." + COLUMN_ARTIST_ID
+            + " order by " + TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + ", "
+            + TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME + ", "
+            + TABLE_SONGS + "." + COLUMN_SONG_TRACK;
+
     private Connection conn;
 
     public boolean open() {
@@ -167,7 +180,7 @@ public class Datasource { // often used as a Singleton
                 sb.append("asc");
             }
         }
-        System.out.println("SQL Statement: "+sb.toString());
+        System.out.println("SQL Statement: " + sb.toString());
 
         try (Statement statement = conn.createStatement();
              ResultSet resultSet = statement.executeQuery(sb.toString())) {
@@ -192,7 +205,7 @@ public class Datasource { // often used as a Singleton
         String sql = "select * from " + TABLE_SONGS;
 
         try (Statement statement = conn.createStatement();
-        ResultSet resultSet = statement.executeQuery(sql)) {
+             ResultSet resultSet = statement.executeQuery(sql)) {
 
             ResultSetMetaData meta = resultSet.getMetaData();
 
@@ -209,7 +222,7 @@ public class Datasource { // often used as a Singleton
         // good practice to assign names as the resulting columns using AS
         String sql = "select count(*) as count from " + table;
         try (Statement statement = conn.createStatement();
-        ResultSet resultSet = statement.executeQuery(sql)) {
+             ResultSet resultSet = statement.executeQuery(sql)) {
 
             int cnt = resultSet.getInt("count"); // passing alias column name rather than the column index 1
             System.out.format("Count = %d\n", cnt);
@@ -217,6 +230,17 @@ public class Datasource { // often used as a Singleton
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return -1;
+        }
+    }
+
+    public boolean createViewForSongArtist() {
+        try (Statement statement = conn.createStatement()) {
+            System.out.println("View query: " + CREATE_ARTIST_FOR_SONG_VIEW);
+            statement.execute(CREATE_ARTIST_FOR_SONG_VIEW);
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Create view failed: " + e.getMessage());
+            return false;
         }
     }
 }
