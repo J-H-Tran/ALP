@@ -43,6 +43,7 @@ public class Main2 {
                     + " Track no: " + songArtist.getTrack());
         }
 
+        datasaource.querySongsMetadata();
         datasaource.close();
     }
 }
@@ -68,5 +69,7 @@ public class Main2 {
  * It's more efficient to use the column index because the getter methods will know exactly where
  * to go to get the value in the ResultSet. When we use the column name the method has to match
  * the column name against the columns in the ResultSet.
+ *
+ * Can query metadata from ResultSet since we might not be able to get the schema with certain DBs
  * */
 

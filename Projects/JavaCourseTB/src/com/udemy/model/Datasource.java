@@ -3,6 +3,7 @@ package com.udemy.model;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -184,6 +185,23 @@ public class Datasource { // often used as a Singleton
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return null;
+        }
+    }
+
+    public void querySongsMetadata() {
+        String sql = "select * from " + TABLE_SONGS;
+
+        try (Statement statement = conn.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql)) {
+
+            ResultSetMetaData meta = resultSet.getMetaData();
+
+            int numCols = meta.getColumnCount();
+            for (int i = 1; i <= numCols; i++) {
+                System.out.format("Column %d in the songs table is named %s\n", i, meta.getColumnName(i));
+            }
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
         }
     }
 }
