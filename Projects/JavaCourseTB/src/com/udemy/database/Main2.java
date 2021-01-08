@@ -44,6 +44,10 @@ public class Main2 {
         }
 
         datasaource.querySongsMetadata();
+
+        int count = datasaource.getCount(Datasource.TABLE_SONGS);
+        System.out.println("Number of songs is: " + count);
+
         datasaource.close();
     }
 }

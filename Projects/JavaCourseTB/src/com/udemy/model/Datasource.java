@@ -204,6 +204,22 @@ public class Datasource { // often used as a Singleton
             System.out.println("Query failed: " + e.getMessage());
         }
     }
+
+    public int getCount(String table) {
+        // good practice to assign names as the resulting columns using AS
+        String sql = "select count(*) as count, min(_id) as min_id from " + table;
+        try (Statement statement = conn.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql)) {
+
+            int cnt = resultSet.getInt("count"); // passing alias column name rather than the column index 1
+            int min = resultSet.getInt("min_id"); // passing alias column name rather than the column index 2
+            System.out.format("Count = %d, Min = %d\n", cnt, min);
+            return cnt;
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return -1;
+        }
+    }
 }
 /*In a large enterprise application we may create a class in the model package for each table
  * and the connections might be coming from a connection pool but for this small application
