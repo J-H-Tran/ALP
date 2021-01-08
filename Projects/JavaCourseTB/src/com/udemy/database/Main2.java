@@ -50,6 +50,16 @@ public class Main2 {
 
         datasaource.createViewForSongArtist();
 
+        songArtists = datasaource.querySongInfoView("She's On Fire");
+        if (songArtists.isEmpty()) { // should really be using isEmpty() rather than checking for null
+            System.out.println("Couldn't find artist for song");
+            return;
+        }
+        for (SongArtist songArtist : songArtists) {
+            System.out.println("From view: Artist name=" + songArtist.getArtistName() + ", Album name=" + songArtist.getAlbumName()
+                    + ", Track number=" + songArtist.getTrack());
+        }
+
         datasaource.close();
     }
 }
