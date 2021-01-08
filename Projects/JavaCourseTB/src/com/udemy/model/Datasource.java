@@ -87,14 +87,52 @@ public class Datasource { // often used as a Singleton
                     + " from " + TABLE_ARTIST_SONG_VIEW
                     + " where " + COLUMN_SONG_TITLE + " = ?"; // ? placeholder character used in prepared statements
 
+    public static final String INSERT_ARTIST = "INSERT INTO " + TABLE_ARTISTS +
+            '(' + COLUMN_ARTIST_NAME + ") VALUES(?)";
+
+    public static final String INSERT_ALBUMS = "INSERT INTO " + TABLE_ALBUMS +
+            '(' + COLUMN_ALBUM_NAME + ", " + COLUMN_ALBUM_ARTIST + ") VALUES(?, ?)";
+
+    public static final String INSERT_SONGS = "INSERT INTO " + TABLE_SONGS +
+            '(' + COLUMN_SONG_TRACK + ", " + COLUMN_SONG_TITLE + ", " + COLUMN_SONG_ALBUM +
+            ") VALUES(?, ?, ?)";
+
+    public static final String QUERY_ARTIST = "SELECT " + COLUMN_ARTIST_ID + " FROM " +
+            TABLE_ARTISTS + " WHERE " + COLUMN_ARTIST_NAME + " = ?";
+
+    public static final String QUERY_ALBUM = "SELECT " + COLUMN_ALBUM_ID + " FROM " +
+            TABLE_ALBUMS + " WHERE " + COLUMN_ALBUM_NAME + " = ?";
+
     private Connection conn;
     private PreparedStatement querySongInfoView;
+
+    private PreparedStatement insertIntoArtists;
+    private PreparedStatement insertIntoAlbums;
+    private PreparedStatement insertIntoSongs;
+
+    private PreparedStatement queryArtist;
+    private PreparedStatement queryAlbum;
 
     public boolean open() {
         try {
             conn = DriverManager.getConnection(CONNECTION_STRING);
             System.out.println("Prepared Query is: " + QUERY_VIEW_SONG_INFO_PREP);
             querySongInfoView = conn.prepareStatement(QUERY_VIEW_SONG_INFO_PREP);
+            /*
+            When we insert an artis or album we need to know what id the '_id' the DB has assigned to the record,
+            recall that _id is a PRIMARY_KEY, and the DB auto generates the value whenever it inserts a record into the table.
+            So we need to use the artist id when we insert the album and the album id when we insert the song.
+            So when we want to get the generated key after a statement is completed we have to add another parameter to
+            the Prepared Statement calls.
+            artists and albums inserts, we use the IDs we get back from those keys to pass them into another insert statement
+            */
+            insertIntoArtists = conn.prepareStatement(INSERT_ARTIST, Statement.RETURN_GENERATED_KEYS);
+            insertIntoAlbums = conn.prepareStatement(INSERT_ALBUMS, Statement.RETURN_GENERATED_KEYS);
+            insertIntoSongs = conn.prepareStatement(INSERT_SONGS);
+
+            queryArtist = conn.prepareStatement(QUERY_ARTIST);
+            queryAlbum = conn.prepareStatement(QUERY_ALBUM);
+
             return true;
         } catch (SQLException e) {
             System.out.println("Couldn't connect to DB: " + e.getMessage());
@@ -106,6 +144,21 @@ public class Datasource { // often used as a Singleton
         try {
             if (querySongInfoView != null) {
                 querySongInfoView.close();
+            }
+            if (insertIntoArtists != null) {
+                insertIntoArtists.close();
+            }
+            if (insertIntoAlbums != null) {
+                insertIntoAlbums.close();
+            }
+            if (insertIntoSongs != null) {
+                insertIntoSongs.close();
+            }
+            if(queryArtist != null) {
+                queryArtist.close();
+            }
+            if(queryAlbum != null) {
+                queryAlbum.close();
             }
             if (conn != null) {
                 conn.close();
