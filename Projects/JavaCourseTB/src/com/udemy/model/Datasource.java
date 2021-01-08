@@ -207,13 +207,12 @@ public class Datasource { // often used as a Singleton
 
     public int getCount(String table) {
         // good practice to assign names as the resulting columns using AS
-        String sql = "select count(*) as count, min(_id) as min_id from " + table;
+        String sql = "select count(*) as count from " + table;
         try (Statement statement = conn.createStatement();
         ResultSet resultSet = statement.executeQuery(sql)) {
 
             int cnt = resultSet.getInt("count"); // passing alias column name rather than the column index 1
-            int min = resultSet.getInt("min_id"); // passing alias column name rather than the column index 2
-            System.out.format("Count = %d, Min = %d\n", cnt, min);
+            System.out.format("Count = %d\n", cnt);
             return cnt;
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
