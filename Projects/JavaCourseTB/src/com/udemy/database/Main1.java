@@ -151,4 +151,31 @@ public class Main1 {
  * Basic CRUD operations: Create, Read, Update, Delete
  * when hard-coding sql statements we leave ourselves vulnerable to SQL Injection.
  * We can approach this by using constants for the strings ad use those, makes renaming happen only in one place.
+ * ------------------------------------------------------------------------------------------------------------------
+ * DB with UI
+ * We want the controller to be able to use the DataSource class. In a real world app there may be more than 1
+ * controller and they'd all need access. So we could have each one create in instance of a Model class but then which
+ * one would be responsible for calling open() and close()? When working with a DataSource it's actually quite
+ * common to use a Singleton Pattern. To create only one instance of a class so now, every obj that needs to call
+ * methods in the Singleton will use the same instance of the DataSource to do so.
+ *
+ * Singleton:
+ * 1. private constructor, no other class will be able to construct an instance of DataSource
+ * 2. create variable to hold that one instance of the class, static so other classes can access
+ * 3. provide method that every other class can use to access the instance, public static access method
+ * So when an obj wants to use the Singleton instance it needs to call the public static access method
+ * that checks to see if a Singleton instance has been previously created, if it has, return it else, create and return it (lazy instantiation)
+ * instance isn't created until the first time it's needed. Not thread-safe unless we declare it when class is loaded
+ * at the instance variable like so, {new Datasource() added to variable initialization}
+ *
+ * private static Datasource instance = new Datasource(); <- (2).
+ *
+ * private Datasource() {} <- (1).
+ *
+ * public stgatic Datasource getInstance() { <- (3).
+ *      return instance;
+ * }
+ *
+ * Now, other classes need to call,
+ *      Datasource.getInstance().crudMethod();
  * */
