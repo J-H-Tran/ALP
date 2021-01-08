@@ -45,7 +45,7 @@ public class Datasource { // often used as a Singleton
             "select " + TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME
                     + " from " + TABLE_ALBUMS + " inner join " + TABLE_ARTISTS
                     + " on " + TABLE_ALBUMS + "." + COLUMN_ALBUM_ARTIST + " = " + TABLE_ARTISTS + "." + COLUMN_ARTIST_ID
-                    + " where " + TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + " = \"";
+                    + " where " + TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + " = \'";
 
     public static final String QUERY_ALBUMS_BY_ARTIST_SORT =
             " order by " + TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME + " collate nocase ";
@@ -109,21 +109,12 @@ public class Datasource { // often used as a Singleton
 //    inner join artists on albums.artist = artists._id
 //    where artists.name ='Carole King' order by albums.name collate nocase asc;
     public List<String> queryAlbumsForArtist(String artistName, int sortOrder) {
-        StringBuilder sb = new StringBuilder("select ");
-        sb.append(TABLE_ALBUMS).append(".").append(COLUMN_ALBUM_NAME);
-        sb.append(" FROM ").append(TABLE_ALBUMS);
-        sb.append(" INNER JOIN ").append(TABLE_ARTISTS).append(" ON ");
-        sb.append(TABLE_ALBUMS).append(".").append(COLUMN_ALBUM_ARTIST);
-        sb.append(" = ").append(TABLE_ARTISTS).append(".").append(COLUMN_ARTIST_ID);
-        sb.append(" WHERE ").append(TABLE_ARTISTS).append(".").append(COLUMN_ARTIST_NAME);
-        sb.append(" = \"").append(artistName).append("\"");
-
-        System.out.println("Before order by option: " + sb.toString());
+        StringBuilder sb = new StringBuilder(QUERY_ALBUMS_BY_ARTIST_START);
+        sb.append(artistName);
+        sb.append("\'");
 
         if (sortOrder != ORDER_BY_NONE) {
-            sb.append(" order by ");
-            sb.append(TABLE_ALBUMS).append(".").append(COLUMN_ALBUM_NAME);
-            sb.append(" collate nocase ");
+            sb.append(QUERY_ALBUMS_BY_ARTIST_SORT);
 
             if (sortOrder == ORDER_BY_DESC) {
                 sb.append("desc");
@@ -136,10 +127,9 @@ public class Datasource { // often used as a Singleton
 
         try (Statement statement = conn.createStatement();
              ResultSet resultSet = statement.executeQuery(sb.toString())) {
-            System.out.println(statement.executeQuery(sb.toString()).next());
+
             List<String> albums = new ArrayList<>();
             while (resultSet.next()) {
-                System.out.println(resultSet.getString(1));
                 albums.add(resultSet.getString(1));
             }
             return albums;
