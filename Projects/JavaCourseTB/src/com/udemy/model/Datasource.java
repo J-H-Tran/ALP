@@ -2,6 +2,7 @@ package com.udemy.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -80,11 +81,20 @@ public class Datasource { // often used as a Singleton
             "select " + COLUMN_ARTIST_NAME + ", " + COLUMN_SONG_ALBUM + ", " + COLUMN_SONG_TRACK
                     + " from " + TABLE_ARTIST_SONG_VIEW + " where " + COLUMN_SONG_TITLE + "= \"";
 
+    // select name, album, track FROM artist_list WHERE title = ?, quotation marks aren't needed around '?' DB actually understands that a String is the value
+    public static final String QUERY_VIEW_SONG_INFO_PREP =
+            "select " + COLUMN_ARTIST_NAME + ", " + COLUMN_SONG_ALBUM + ", " + COLUMN_SONG_TRACK
+                    + " from " + TABLE_ARTIST_SONG_VIEW
+                    + " where " + COLUMN_SONG_TITLE + " = ?"; // ? placeholder character used in prepared statements
+
     private Connection conn;
+    private PreparedStatement querySongInfoView;
 
     public boolean open() {
         try {
             conn = DriverManager.getConnection(CONNECTION_STRING);
+            System.out.println("Prepared Query is: "+QUERY_VIEW_SONG_INFO_PREP);
+            querySongInfoView = conn.prepareStatement(QUERY_VIEW_SONG_INFO_PREP);
             return true;
         } catch (SQLException e) {
             System.out.println("Couldn't connect to DB: " + e.getMessage());
@@ -94,6 +104,9 @@ public class Datasource { // often used as a Singleton
 
     public void close() {
         try {
+            if (querySongInfoView != null) {
+                querySongInfoView.close();
+            }
             if (conn != null) {
                 conn.close();
             }
@@ -249,13 +262,9 @@ public class Datasource { // often used as a Singleton
     }
 
     public List<SongArtist> querySongInfoView(String title) {
-        StringBuilder sb = new StringBuilder(QUERY_VIEW_SONG_INFO);
-        sb.append(title).append("\"");
-
-        System.out.println(sb.toString());
-
-        try (Statement statement = conn.createStatement();
-             ResultSet resultSet = statement.executeQuery(sb.toString())) {
+        try {
+            querySongInfoView.setString(1, title);
+            ResultSet resultSet = querySongInfoView.executeQuery();
 
             List<SongArtist> songArtists = new ArrayList<>();
             while (resultSet.next()) {
@@ -271,6 +280,29 @@ public class Datasource { // often used as a Singleton
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }
+
+        /*StringBuilder sb = new StringBuilder(QUERY_VIEW_SONG_INFO);
+        sb.append(title).append("\"");
+
+        System.out.println(sb.toString());*/
+
+        /*try (Statement statement = conn.createStatement();
+             ResultSet resultSet = statement.executeQuery(sb.toString())) {
+
+            List<SongArtist> songArtists = new ArrayList<>();
+            while (resultSet.next()) {
+                SongArtist songArtist = new SongArtist();
+                songArtist.setArtistName(resultSet.getString(1));
+                songArtist.setAlbumName(resultSet.getString(2));
+                songArtist.setTrack(resultSet.getInt(3));
+                songArtists.add(songArtist);
+            }
+
+            return songArtists;
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
+        }*/
     }
 }
 /*In a large enterprise application we may create a class in the model package for each table
@@ -281,4 +313,25 @@ public class Datasource { // often used as a Singleton
  * methods in the model package to have to understand the implementation detials of the model.
  * we need an alternative way to returnthe information. We'll return a List of artists and that
  * means we're going to need classes for artists, albums, songs.
+ *
+ * calling execute() or executeQuery() for every query like this isn't a best practice.
+ * Since every call is compiled each time, in an enterprise application there will definitely
+ * be performance issues. DB is also vulnerable to hacking attempts.
+ *
+ * Solution to that? Prepared Statements. Performance improvement to compile a query every time.
+ * This handles sql inject by not concatenating Strings together to create sql statements.
+ * Provide placeholders in sql statements for values that change from query to query.
+ *
+ * We need to declare an instance variable for the prepared statement because we only want
+ * to create it once, we don't want to create it every time we want to query. We want it to
+ * be precompiled once instead of creating a new instance of it every time we want to use it.
+ * We lose the performance benefit that a Prepared Statement can provide us.
+ *
+ * We don't have to worry about closing the ResultSet explicitly when using the PreparedStatement (extends Statement)
+ * since it closes automatically when we close the PreparedStatement. So how does this actually work?
+ * Value that's being substituted is treated as a literal value, nothing within the value is being treated as
+ * SQL. instead of an input being part of the sql statement the literal takes care of any SQL-like characteristics.
+ *  where title = "{Go Your Own Way" or 1=1 or "}"
+ *  where title = {"Go Your Own Way or 1=1 or "} see's it as an entire string instead of noticing the  quotes as
+ * something to interpret.
  * */

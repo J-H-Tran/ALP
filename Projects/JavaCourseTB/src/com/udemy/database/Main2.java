@@ -5,6 +5,7 @@ import com.udemy.model.Datasource;
 import com.udemy.model.SongArtist;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class Main2 {
 
@@ -50,7 +51,11 @@ public class Main2 {
 
         datasaource.createViewForSongArtist();
 
-        songArtists = datasaource.querySongInfoView("She's On Fire");
+        Scanner scnr = new Scanner(System.in);
+        System.out.println("Enter a song title: ");
+        String title = scnr.nextLine();
+
+        songArtists = datasaource.querySongInfoView(title);
         if (songArtists.isEmpty()) { // should really be using isEmpty() rather than checking for null
             System.out.println("Couldn't find artist for song");
             return;
