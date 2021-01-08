@@ -154,10 +154,10 @@ public class Datasource { // often used as a Singleton
             if (insertIntoSongs != null) {
                 insertIntoSongs.close();
             }
-            if(queryArtist != null) {
+            if (queryArtist != null) {
                 queryArtist.close();
             }
-            if(queryAlbum != null) {
+            if (queryAlbum != null) {
                 queryAlbum.close();
             }
             if (conn != null) {
@@ -356,6 +356,94 @@ public class Datasource { // often used as a Singleton
             System.out.println("Query failed: " + e.getMessage());
             return null;
         }*/
+    }
+
+    private int insertArtist(String name) throws SQLException {
+
+        queryArtist.setString(1, name); // sets the value for the placeholder in PreparedStatement and provide sql statement
+        ResultSet results = queryArtist.executeQuery();
+        if (results.next()) { // moves cursor to first entry since initially at beginning of record
+            return results.getInt(1); // gets data, artist already on file returns id
+        } else {
+            // Insert the artist
+            insertIntoArtists.setString(1, name);
+            int affectedRows = insertIntoArtists.executeUpdate(); // returns number of rows affected by the executed sql statement
+
+            if (affectedRows != 1) {
+                throw new SQLException("Couldn't insert artist!");
+            }
+            // gets a ResultSet that contains the generated id key from newly created record
+            ResultSet generatedKeys = insertIntoArtists.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            } else {
+                throw new SQLException("Couldn't get _id for artist");
+            }
+        }
+    }
+
+    // artistId from insertArtist()
+    private int insertAlbum(String name, int artistId) throws SQLException {
+
+        queryAlbum.setString(1, name);
+        ResultSet results = queryAlbum.executeQuery();
+        if (results.next()) {
+            return results.getInt(1);
+        } else {
+            // Insert the album
+            insertIntoAlbums.setString(1, name);
+            insertIntoAlbums.setInt(2, artistId);
+            int affectedRows = insertIntoAlbums.executeUpdate();
+
+            if (affectedRows != 1) {
+                throw new SQLException("Couldn't insert album!");
+            }
+
+            ResultSet generatedKeys = insertIntoAlbums.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            } else {
+                throw new SQLException("Couldn't get _id for album");
+            }
+        }
+    }
+
+    private void insertSong(String title, String artist, String album, int track) {
+
+        try {
+            conn.setAutoCommit(false);
+
+            int artistId = insertArtist(artist);
+            int albumId = insertAlbum(album, artistId);
+
+            insertIntoSongs.setInt(1, track);
+            insertIntoSongs.setString(2, title);
+            insertIntoSongs.setInt(3, albumId);
+
+            int affectedRows = insertIntoSongs.executeUpdate();
+            if (affectedRows == 1) { // commit changes if update succeeds
+                conn.commit();
+            } else {
+                throw new SQLException("The song insert failed");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Insert song exception: " + e.getMessage());
+            try {
+                System.out.println("Performing rollback");
+                conn.rollback();
+            } catch (SQLException e2) {
+                System.out.println("Oh boy! Things are really bad! " + e2.getMessage());
+            }
+        } finally {
+            try {
+                System.out.println("Resetting default commit behavior");
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.out.println("Couldn't reset auto-commit! " + e.getMessage());
+            }
+
+        }
     }
 }
 /*In a large enterprise application we may create a class in the model package for each table
