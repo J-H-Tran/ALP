@@ -408,7 +408,7 @@ public class Datasource { // often used as a Singleton
         }
     }
 
-    private void insertSong(String title, String artist, String album, int track) {
+    public void insertSong(String title, String artist, String album, int track) {
 
         try {
             conn.setAutoCommit(false);
@@ -427,7 +427,7 @@ public class Datasource { // often used as a Singleton
                 throw new SQLException("The song insert failed");
             }
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println("Insert song exception: " + e.getMessage());
             try {
                 System.out.println("Performing rollback");
@@ -451,8 +451,8 @@ public class Datasource { // often used as a Singleton
  * we'll keep our db methods in our Datasource class
  *
  * We don't want to return a ResultSet from our methods because we don't want classes that use
- * methods in the model package to have to understand the implementation detials of the model.
- * we need an alternative way to returnthe information. We'll return a List of artists and that
+ * methods in the model package to have to understand the implementation details of the model.
+ * we need an alternative way to return the information. We'll return a List of artists and that
  * means we're going to need classes for artists, albums, songs.
  *
  * calling execute() or executeQuery() for every query like this isn't a best practice.
@@ -508,16 +508,16 @@ public class Datasource { // often used as a Singleton
  * the statements as a single unit. Either they would all successfully complete or none of them would.
  * Enter transactions! THEY ENSURE THE INTEGRITY OF THE DATA WITHIN A DB
  *
- * Transaction - A sequence of sql statements that are treated as a single logical unit. If any of the statements fail,
- * the results of any previous statements in the transaction can be rolled bac, or just not saved as if they never happened.
- * DB transactions must be ACID-compliant:
- *  Atomicity - if a series of sql statements change the database, then either all the changes are committed or none of the are
- *  Consistency - before a transaction begins, the DB is in a valid state. When it completes, the DB is still in a valid state.
- *  Isolation - until the changes committed by a transaction are completed they won't be visible to other connections.
- *      Transactions cannot depend on each other
- *  Durability - once the changes performed by a transaction are committed to the DB they're permanent.
- *      If an application then crashes or the DB server does down (in client-server DBs) the changes made by
- *      the transaction are still there when the application runs again or the DB comes back up
+ *      Transaction - A sequence of sql statements that are treated as a single logical unit. If any of the statements fail,
+ *      the results of any previous statements in the transaction can be rolled bac, or just not saved as if they never happened.
+ *      DB transactions must be ACID-compliant:
+ *       Atomicity - if a series of sql statements change the database, then either all the changes are committed or none of the are
+ *       Consistency - before a transaction begins, the DB is in a valid state. When it completes, the DB is still in a valid state.
+ *       Isolation - until the changes committed by a transaction are completed they won't be visible to other connections.
+ *           Transactions cannot depend on each other
+ *       Durability - once the changes performed by a transaction are committed to the DB they're permanent.
+ *           If an application then crashes or the DB server does down (in client-server DBs) the changes made by
+ *           the transaction are still there when the application runs again or the DB comes back up
  *
  * We only have to use transactions when we change data in the DB. It's not needed when querying the DB since
  * we're not making any changes to the data.
@@ -535,4 +535,8 @@ public class Datasource { // often used as a Singleton
  * 3. If no errors, call Connection.commit()
  *      If there are errors, call Connection.rollback()
  * 4. turn auto commit back on setAutoCommit(true)
+ *
+ * Possible to rollback to a specific point rather than all the way back to before any of the changes started.
+ * We just need to call Connection.setSavePoint() to where we want to set points for, which returns a SavePoint obj
+ * then call rollback() and pass it in the SavePoint obj to go back to that point.
  * */

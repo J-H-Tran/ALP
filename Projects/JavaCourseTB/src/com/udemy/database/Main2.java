@@ -5,7 +5,6 @@ import com.udemy.model.Datasource;
 import com.udemy.model.SongArtist;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class Main2 {
 
@@ -51,7 +50,7 @@ public class Main2 {
 
         datasaource.createViewForSongArtist();
 
-        Scanner scnr = new Scanner(System.in);
+        /*Scanner scnr = new Scanner(System.in);
         System.out.println("Enter a song title: ");
         String title = scnr.nextLine();
 
@@ -63,7 +62,9 @@ public class Main2 {
         for (SongArtist songArtist : songArtists) {
             System.out.println("From view: Artist name=" + songArtist.getArtistName() + ", Album name=" + songArtist.getAlbumName()
                     + ", Track number=" + songArtist.getTrack());
-        }
+        }*/
+
+        datasaource.insertSong("YOYO", "YOYO", "YOYO", 1);
 
         datasaource.close();
     }
