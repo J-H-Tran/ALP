@@ -25,6 +25,11 @@ public class Main2 {
             System.out.println("ID = " + artist.getId() + ", Name = " + artist.getName());
         }
 
+        List<String> albumsForArtists = datasaource.queryAlbumsForArtist("Iron Maidnen", Datasource.ORDER_BY_ASC);
+        for (String album : albumsForArtists) {
+            System.out.println(album);
+        }
+
         datasaource.close();
     }
 }
