@@ -37,4 +37,36 @@ public class Main1 {
 * connected to the internet. 2 applications running on the same host can use TCP/IP to communicate with each other.
 * When the client and server are on the same host, usually IP address 127.0.0.1 which is referred to as
 * localhost is used to identify the host.
+* ------------------------------------------------------------------------------------------------------------------
+* java.net package
+* has 2 APIs: Low-level and High-level
+* When working with low-level API you'll have to be more aware of networking concepts
+*
+* common example is client/server and we'll often want a reliable 2-way communication link between the client and server
+* This is where TCP protocol comes in.
+* TCP (Transmission Control Protocol) - establishes a 2-way connection between hosts and this connection is reliable
+* in the sense that the 2 hosts talk to each other. When used with Internet addresses you get TCP/IP, which
+* uses the client/server model.
+*
+* Communication Flow of TCP/IP:
+*
+* 1. Client opens connection to the server
+* 2. Client sends request to the server
+* 3. Server sends response to the client
+* 4. Client closes connection to the server
+*
+* 2 & 3 may be repeated multiple times before the connection is closed.
+*
+* Socket - A single end-point of the 2-way connection
+* When using the low-level networking API, we'll be using sockets to establish connections, send requests, and receive responses
+*
+* When we have multiple clients connecting to the same server they'll use the same port number, but each client will have its own socket.
+* Socket class for Client and ServerSocket class for the server.
+*
+* What's great about Java is that al lwe have to do is provide the IP address and port number when creating the socket.
+* We don't have to understand how TCP/IP works. Underneath the covers, specific messages have to be sent to
+* establish a connection between the client and th server (process is called handshaking) and the data ha to
+* be sent as packets, which must be in a specific format.
+*
+* We'll write 2 applications to demonstrate how to do network coding. The server and the client.
 * */
