@@ -93,7 +93,7 @@ public class Datasource { // often used as a Singleton
     public boolean open() {
         try {
             conn = DriverManager.getConnection(CONNECTION_STRING);
-            System.out.println("Prepared Query is: "+QUERY_VIEW_SONG_INFO_PREP);
+            System.out.println("Prepared Query is: " + QUERY_VIEW_SONG_INFO_PREP);
             querySongInfoView = conn.prepareStatement(QUERY_VIEW_SONG_INFO_PREP);
             return true;
         } catch (SQLException e) {
@@ -334,4 +334,64 @@ public class Datasource { // often used as a Singleton
  *  where title = "{Go Your Own Way" or 1=1 or "}"
  *  where title = {"Go Your Own Way or 1=1 or "} see's it as an entire string instead of noticing the  quotes as
  * something to interpret.
+ * -------------------------------------------------------------------------------------------------------------------
+ * PreparedStatement
+ * It's good practice to use PreparedStatements because of the potential performance benefit, and because they protect
+ * the database against SQL injection attacks.
+ * using PreparedStatement:
+ * 1. Declare a constant for the SQL statement that contains the placeholders
+ * 2. Create a PreparedStatement instance using Connection.prepareStatement(sqlString)
+ * 3. When ready to perform (insert, update, delete) we call appropriate setter methods to set the placeholders to the
+ *  values we want to use in the statement
+ * 4. We run the statement using PreparedStatement.execute() or PrepareStatement.executeQuery()
+ * 5. We process the results the same way we do when using a regular old Statement
+ *
+ * Transactions:
+ * Because JDBC Connection Class auto commits changes by default every time we calls execute() to insert, update, or
+ * delete records, those changes are saved to the database as soon as the SQL statement completes.
+ * Sometimes that's what we want, but often, it isn't.
+ *
+ * ie.
+ * Online Banking,
+ * Suppose we want money to transfer from one account to another, it requires 2 sql statements:
+ * 1. update source account with new balance
+ * 2. update destination account with new balance
+ *
+ * What would happen if we executed the first statement successfully but the second statement failed?
+ * Source has $1000.00 and destination has $100.00 and customer want to transfer $200.00 into the destination account
+ * Without errors source would be 800 and destination should be 300.
+ * If 1. succeeds and 2. fails, effectively $200 will go missing. What if DB goes down during 2?
+ * Integrity of data in DB is compromised.
+ *
+ * It would be nice if, when we wanted to accomplish something that requires multiple sql statements we could run all
+ * the statements as a single unit. Either they would all successfully complete or none of them would.
+ * Enter transactions! THEY ENSURE THE INTEGRITY OF THE DATA WITHIN A DB
+ *
+ * Transaction - A sequence of sql statements that are treated as a single logical unit. If any of the statements fail,
+ * the results of any previous statements in the transaction can be rolled bac, or just not saved as if they never happened.
+ * DB transactions must be ACID-compliant:
+ *  Atomicity - if a series of sql statements change the database, then either all the changes are committed or none of the are
+ *  Consistency - before a transaction begins, the DB is in a valid state. When it completes, the DB is still in a valid state.
+ *  Isolation - until the changes committed by a transaction are completed they won't be visible to other connections.
+ *      Transactions cannot depend on each other
+ *  Durability - once the changes performed by a transaction are committed to the DB they're permanent.
+ *      If an application then crashes or the DB server does down (in client-server DBs) the changes made by
+ *      the transaction are still there when the application runs again or the DB comes back up
+ *
+ * We only have to use transactions when we change data in the DB. It's not needed when querying the DB since
+ * we're not making any changes to the data.
+ * No changes can be made to the DB outside of a transaction, every time we use UPDATE, INSERT, and DELETE,
+ * SQLite was creating a transaction, running the statement, and the committing the changes
+ * JDBC Connection auto commits by default. When we turn it off, SQLite stopped auto committing but they were
+ * still made as part of a transaction.
+ *
+ * If we close a connection before we commit any outstanding changes, the changes are rolled back.
+ *
+ * In JDBC:
+ * We call methods from Connection class to execute transaction-related commands:
+ * 1. turn off auto commit, Connection.setAutoCommit(false)
+ * 2. Perform the SQL operations that form the transaction
+ * 3. If no errors, call Connection.commit()
+ *      If there are errors, call Connection.rollback()
+ * 4. turn auto commit back on setAutoCommit(true)
  * */
