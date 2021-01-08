@@ -45,10 +45,22 @@ public class Datasource { // often used as a Singleton
             "select " + TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME
                     + " from " + TABLE_ALBUMS + " inner join " + TABLE_ARTISTS
                     + " on " + TABLE_ALBUMS + "." + COLUMN_ALBUM_ARTIST + " = " + TABLE_ARTISTS + "." + COLUMN_ARTIST_ID
-                    + " where " + TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + " = \'";
+                    + " where " + TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + " = \"";
 
     public static final String QUERY_ALBUMS_BY_ARTIST_SORT =
             " order by " + TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME + " collate nocase ";
+
+    public static final String QUERY_ARTIST_FOR_SONG_START =
+            "select " + TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + ", " + TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME
+                    + ", " + TABLE_SONGS + "." + COLUMN_SONG_TRACK
+                    + " from " + TABLE_SONGS
+                    + " inner JOIN " + TABLE_ALBUMS
+                    + " on " + TABLE_SONGS + "." + COLUMN_SONG_ALBUM + " = " + TABLE_ALBUMS + "." + COLUMN_ALBUM_ID
+                    + " inner join " + TABLE_ARTISTS
+                    + " on " + TABLE_ALBUMS + "." + COLUMN_ALBUM_ARTIST + " = " + TABLE_ARTISTS + "." + COLUMN_ARTIST_ID
+                    + " where " + TABLE_SONGS + "." + COLUMN_SONG_TITLE + " = \"";
+    public static final String QUERY_ARTIST_FOR_SONG_SORT =
+            " order by " + TABLE_ARTISTS + "." + COLUMN_ARTIST_NAME + ", " + TABLE_ALBUMS + "." + COLUMN_ALBUM_NAME + " collate nocase ";
 
     private Connection conn;
 
@@ -111,7 +123,7 @@ public class Datasource { // often used as a Singleton
     public List<String> queryAlbumsForArtist(String artistName, int sortOrder) {
         StringBuilder sb = new StringBuilder(QUERY_ALBUMS_BY_ARTIST_START);
         sb.append(artistName);
-        sb.append("\'");
+        sb.append("\"");
 
         if (sortOrder != ORDER_BY_NONE) {
             sb.append(QUERY_ALBUMS_BY_ARTIST_SORT);
@@ -133,6 +145,41 @@ public class Datasource { // often used as a Singleton
                 albums.add(resultSet.getString(1));
             }
             return albums;
+
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public List<SongArtist> queryArtistsForSong(String songName, int sortOrder) {
+        StringBuilder sb = new StringBuilder(QUERY_ARTIST_FOR_SONG_START);
+        sb.append(songName);
+        sb.append("\"");
+
+        if (sortOrder != ORDER_BY_NONE) {
+            sb.append(QUERY_ARTIST_FOR_SONG_SORT);
+
+            if (sortOrder == ORDER_BY_DESC) {
+                sb.append("desc");
+            } else {
+                sb.append("asc");
+            }
+        }
+        System.out.println("SQL Statement: "+sb.toString());
+
+        try (Statement statement = conn.createStatement();
+             ResultSet resultSet = statement.executeQuery(sb.toString())) {
+
+            List<SongArtist> songArtists = new ArrayList<>();
+            while (resultSet.next()) {
+                SongArtist songArtist = new SongArtist();
+                songArtist.setArtistName(resultSet.getString(1));
+                songArtist.setAlbumName(resultSet.getString(2));
+                songArtist.setTrack(resultSet.getInt(3));
+                songArtists.add(songArtist);
+            }
+            return songArtists;
 
         } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
